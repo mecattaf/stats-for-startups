@@ -3,13 +3,28 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import SearchResults from './SearchResults'
 
-export default function SearchDialog({ isOpen, onClose }) {
+export default function SearchDialog({ 
+  isOpen, 
+  onClose, 
+  dictionary = {}, 
+  currentLang = 'en'
+}) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [pagefind, setPagefind] = useState(null)
   const [pagefindLoaded, setPagefindLoaded] = useState(false)
   const [searchError, setSearchError] = useState(null)
+  
+  // Get dictionary values with fallbacks
+  const placeholderText = dictionary.placeholder || 'Search...'
+  const loadingText = dictionary.loading || 'Searching...'
+  const errorText = dictionary.error || 'Something went wrong with your search'
+  const noResultsText = dictionary.noResults || 'No results found'
+  const typeToSearchText = dictionary.typeToSearch || 'Type to start searching'
+  const resultsText = dictionary.results || 'Results'
+  const closeText = dictionary.close || 'Close search'
+  const escText = dictionary.escToClose || 'Press ESC to close'
   
   const inputRef = useRef(null)
   const dialogRef = useRef(null)
@@ -32,13 +47,13 @@ export default function SearchDialog({ isOpen, onClose }) {
         setLoading(false)
       } catch (error) {
         console.error('Failed to load Pagefind:', error)
-        setSearchError('Failed to load search. Please try again later.')
+        setSearchError(errorText)
         setLoading(false)
       }
     }
 
     loadPagefind()
-  }, [isOpen, pagefindLoaded])
+  }, [isOpen, pagefindLoaded, errorText])
 
   // Focus input when dialog opens
   useEffect(() => {
@@ -72,7 +87,13 @@ export default function SearchDialog({ isOpen, onClose }) {
 
       try {
         setLoading(true)
-        const search = await pagefind.search(searchQuery)
+        
+        // Search with the current language filter
+        const search = await pagefind.search(searchQuery, {
+          filters: {
+            language: currentLang
+          }
+        })
         
         // Transform results to a more usable format
         const searchResults = await Promise.all(
@@ -91,11 +112,11 @@ export default function SearchDialog({ isOpen, onClose }) {
         setLoading(false)
       } catch (error) {
         console.error('Search error:', error)
-        setSearchError('Something went wrong with your search. Please try again.')
+        setSearchError(errorText)
         setLoading(false)
       }
     },
-    [pagefind]
+    [pagefind, currentLang, errorText]
   )
 
   // Debounce search input
@@ -150,10 +171,10 @@ export default function SearchDialog({ isOpen, onClose }) {
               ref={inputRef}
               type="search"
               className="block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-charge placeholder-gray-500 dark:placeholder-gray-400"
-              placeholder="Search for KPIs, metrics, and more..."
+              placeholder={placeholderText}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search"
+              aria-label={placeholderText}
             />
             {query && (
               <button
@@ -181,7 +202,7 @@ export default function SearchDialog({ isOpen, onClose }) {
           <button
             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
             onClick={onClose}
-            aria-label="Close search"
+            aria-label={closeText}
           >
             <svg 
               className="h-6 w-6" 
@@ -230,13 +251,20 @@ export default function SearchDialog({ isOpen, onClose }) {
               loading={loading || !pagefindLoaded}
               query={query}
               onClose={onClose}
+              currentLang={currentLang}
+              dictionary={{
+                noResults: noResultsText,
+                loading: loadingText,
+                typeToSearch: typeToSearchText,
+                results: resultsText
+              }}
             />
           )}
         </div>
         
         {/* Optional footer with search info */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-500 dark:text-gray-400 text-center">
-          <p>Press ESC to close, or use '/' to search anytime</p>
+          <p>{escText}</p>
         </div>
       </div>
     </div>

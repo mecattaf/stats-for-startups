@@ -163,19 +163,3 @@ a {
 .katex-display {
   @apply my-6 overflow-x-auto overflow-y-hidden;
 }
-
-/* Logo styling */
-.logo-word {
-  position: relative;
-}
-.logo-word::after {
-  content: 'BETA';
-  position: relative;
-  font-size: 8px;
-  font-family: serif;
-  font-weight: normal;
-  top: -6px;
-  right: 2px;
-  letter-spacing: 1px;
-  opacity: 0.7;
-}

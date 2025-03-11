@@ -4,8 +4,23 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function Footer() {
+export default function Footer({ dictionary, currentLang }) {
   const [scrolled, setScrolled] = useState(false)
+  
+  // Navigation items from dictionary
+  const nav = dictionary?.navigation || {
+    home: 'Home',
+    collections: 'Collections',
+    about: 'About',
+    chargeVc: 'Charge VC',
+    terms: 'T&Cs'
+  }
+  
+  // Footer text
+  const footerText = dictionary?.footer || {
+    copyright: 'Copyright {year} - Charge Ventures',
+    scrollToTop: 'Scroll to top'
+  }
   
   // Handle scroll event to show/hide the scroll-to-top button
   const handleScroll = () => {
@@ -45,25 +60,25 @@ export default function Footer() {
         {/* Footer Links */}
         <ul className="flex justify-center py-4">
           <li className="mx-3 pr-0 hover:underline">
-            <Link href="/">Home</Link>
+            <Link href={`/${currentLang}`}>{nav.home}</Link>
           </li>
           <li className="mx-3 pr-0 hover:underline">
-            <Link href="/collections">Collections</Link>
+            <Link href={`/${currentLang}/collections`}>{nav.collections}</Link>
           </li>
           <li className="mx-3 pr-0 hover:underline">
-            <Link href="/about">About</Link>
+            <Link href={`/${currentLang}/about`}>{nav.about}</Link>
           </li>
           <li className="mx-3 pr-0 hover:underline">
             <a href="https://charge.vc" target="_blank" rel="noopener noreferrer">
-              Charge VC
+              {nav.chargeVc}
             </a>
           </li>
           <li className="mx-3 pr-0 hover:underline">
-            <Link href="/terms">T&amp;Cs</Link>
+            <Link href={`/${currentLang}/terms`}>{nav.terms}</Link>
           </li>
           <li className="mx-3 pr-0 hover:underline">
             <a 
-              href="https://github.com/yourusername/stats-for-startups-nextra" 
+              href="https://github.com/mecattaf/stats-for-startups" 
               target="_blank" 
               rel="noopener noreferrer"
             >
@@ -74,7 +89,7 @@ export default function Footer() {
         
         {/* Copyright */}
         <div className="text-center p-4 text-gray-400 text-xs">
-          Copyright {new Date().getFullYear()} - Charge Ventures
+          {footerText.copyright.replace('{year}', new Date().getFullYear())}
         </div>
       </div>
 
@@ -83,6 +98,7 @@ export default function Footer() {
         <div
           onClick={scrollTop}
           className="fixed bottom-4 cursor-pointer hover:bg-opacity-100 rounded-full right-4 p-4 bg-opacity-50 bg-gray-200"
+          aria-label={footerText.scrollToTop}
         >
           <svg 
             width="20" 

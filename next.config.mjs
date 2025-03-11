@@ -14,7 +14,7 @@ const withNextra = nextra({
   defaultShowCopyCode: true,
   staticImage: true,
   
-  // Disable default search (will be implemented separately)
+  // Disable default search (using Pagefind instead)
   flexsearch: false,
   
   // Configure the repository for "Edit this page" links
@@ -35,6 +35,16 @@ export default withNextra({
   images: {
     domains: ['statsforstartups.com'],
     unoptimized: process.env.NODE_ENV === 'production' // Required for Cloudflare Pages
+  },
+  
+  // i18n configuration
+  i18n: {
+    // Define the locales
+    locales: ['en'],
+    // Set the default locale
+    defaultLocale: 'en',
+    // Disable automatic locale detection
+    localeDetection: false
   },
   
   // Configure URL rewrites to maintain compatibility with old URLs

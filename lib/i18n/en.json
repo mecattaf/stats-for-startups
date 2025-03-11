@@ -1,0 +1,72 @@
+{
+  "siteTitle": "Stats For Startups",
+  "siteDescription": "A repository of key performance indicators for startups",
+  "siteKeywords": "KPI, startup, metrics, performance indicators, business metrics",
+  
+  "navigation": {
+    "home": "Home",
+    "collections": "Collections",
+    "about": "About",
+    "terms": "T&Cs",
+    "chargeVc": "Charge VC"
+  },
+  
+  "search": {
+    "placeholder": "Search over 150 metrics",
+    "button": "Search",
+    "shortcut": "/",
+    "noResults": "No results found",
+    "loading": "Searching...",
+    "error": "Error occurred while searching",
+    "typeToSearch": "Type to start searching",
+    "results": "Results",
+    "close": "Close search"
+  },
+  
+  "kpi": {
+    "relatedKpis": "Related KPIs",
+    "alternativeNames": "aka",
+    "calculation": "Calculation",
+    "category": "Category",
+    "stage": "Startup Stage",
+    "history": "History",
+    "currentVersion": "Current version",
+    "by": "by",
+    "submitRevision": "Submit a revision"
+  },
+  
+  "collections": {
+    "allCollections": "All collections",
+    "noKpisInCollection": "No KPIs found in this collection"
+  },
+  
+  "tags": {
+    "function": "Function",
+    "startupStage": "Startup Stage",
+    "browseTags": "Browse Tags",
+    "noTags": "No tags found"
+  },
+  
+  "alphabet": {
+    "explore": "Explore all KPIs",
+    "letter": "KPIs starting with {letter}"
+  },
+  
+  "footer": {
+    "copyright": "Copyright {year} - Charge Ventures",
+    "scrollToTop": "Scroll to top"
+  },
+  
+  "error": {
+    "notFound": "Oops! This page doesn't exist...",
+    "backHome": "← Back Home",
+    "serverError": "You are in good hands! We'll fix this and come back asap."
+  },
+  
+  "common": {
+    "loading": "Loading...",
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "beta": "BETA"
+  }
+}
