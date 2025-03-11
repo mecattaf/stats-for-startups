@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import { Inter } from 'next/font/google'
 import { Head } from 'nextra/components'
+import { getPageMap } from 'nextra/page-map'
 import Header from '@/app/_components/layout/Header'
 import Footer from '@/app/_components/layout/Footer'
 
@@ -41,10 +42,20 @@ export const metadata = {
   }
 }
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  // pageMap is now loaded asynchronously using getPageMap()
+  const pageMap = await getPageMap()
+  
   return (
-    <html lang="en" className={inter.className}>
+    <html 
+      lang="en" 
+      dir="ltr"
+      className={inter.className}
+      // This attribute helps avoid hydration warnings with dark mode
+      suppressHydrationWarning
+    >
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {/* KaTeX CSS for math equations */}
         <link 
           rel="stylesheet" 
@@ -53,9 +64,33 @@ export default function RootLayout({ children }) {
           crossOrigin="anonymous"
         />
         <link rel="icon" href="/favicon.png" />
+        {/* Theme script for system-based dark mode */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                // On page load, check for dark mode preference
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+                
+                // Listen for system preference changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                  if (e.matches) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                });
+              })();
+            `,
+          }}
+        />
       </Head>
-      <body className="flex flex-col min-h-screen bg-white">
-        <Header />
+      <body className="flex flex-col min-h-screen bg-white dark:bg-gray-900 dark:text-white">
+        <Header pageMap={pageMap} />
         <main className="flex-grow">
           {children}
         </main>
