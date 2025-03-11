@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
-import { Head, Banner, Search } from 'nextra/components'
-import { Layout } from 'nextra-theme-docs'
+import { Head, Search } from 'nextra/components'
+import { Layout, useConfig } from 'nextra-theme-docs'
 import './globals.css'
 
 // Load Inter font
@@ -100,12 +100,16 @@ export default function RootLayout({ children }) {
             defaultMenuCollapseLevel: 1,
           }}
           
+          // Search component
+          search={{
+            component: <Search />
+          }}
+          
           // i18n configuration
           i18n={[
             { locale: 'en', name: 'English' }
           ]}
         >
-          {/* You can add Search component here for global search */}
           {children}
         </Layout>
       </body>
