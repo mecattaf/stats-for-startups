@@ -91,11 +91,9 @@ export default async function RootLayout({ children }) {
       </Head>
       <body className="flex flex-col min-h-screen bg-white dark:bg-gray-900 dark:text-white">
         <Header pageMap={pageMap} />
-        <main className="flex-grow">
+        <main className="flex-grow" data-pagefind-body>
           {children}
         </main>
         <Footer />
       </body>
     </html>
-  )
-}
