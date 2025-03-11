@@ -1,115 +1,119 @@
-// app/[lang]/page.jsx - Serves as the root page for each language
-import fs from 'fs/promises'
-import path from 'path'
-import matter from 'gray-matter'
-import Link from 'next/link'
-import Image from 'next/image'
-import CollectionCard from '@/app/_components/features/CollectionCard'
-import { getDictionary } from '@/lib/i18n/getDictionary'
+import fs from 'fs/promises';
+import path from 'path';
+import matter from 'gray-matter';
+import Link from 'next/link';
+import Image from 'next/image';
+import CollectionCard from '@/app/_components/features/CollectionCard';
+import { getDictionary } from '@/lib/i18n/getDictionary';
+
+// Generate static params for the language pages
+export function generateStaticParams() {
+  return [{ lang: 'en' }];
+}
 
 // Get collections from MDX files
 async function getCollections() {
-  const collectionDir = path.join(process.cwd(), 'content', 'collections')
+  const collectionDir = path.join(process.cwd(), 'content', 'collections');
   
   try {
     // Read collection directory
-    const files = await fs.readdir(collectionDir)
+    const files = await fs.readdir(collectionDir);
     
     // Filter for MDX files
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'))
+    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
     
     // Read and parse each file
     const collections = await Promise.all(
       mdxFiles.map(async (file) => {
-        const filePath = path.join(collectionDir, file)
-        const content = await fs.readFile(filePath, 'utf8')
-        const { data } = matter(content)
+        const filePath = path.join(collectionDir, file);
+        const content = await fs.readFile(filePath, 'utf8');
+        const { data } = matter(content);
         
         // Get slug from filename
-        const slug = file.replace(/\.mdx$/, '')
+        const slug = file.replace(/\.mdx$/, '');
         
         return {
           ...data,
           slug
-        }
+        };
       })
-    )
+    );
     
-    return collections
+    return collections;
   } catch (error) {
-    console.error('Error getting collections:', error)
-    return []
+    console.error('Error getting collections:', error);
+    return [];
   }
 }
 
 // Get alphabet map of KPIs
 async function getAlphabetMap() {
-  const kpiDir = path.join(process.cwd(), 'content', 'kpis')
+  const kpiDir = path.join(process.cwd(), 'content', 'kpis');
   
   try {
     // Read KPI directory
-    const files = await fs.readdir(kpiDir)
+    const files = await fs.readdir(kpiDir);
     
     // Filter for MDX files
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'))
+    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
     
     // Read and parse each file to get abbreviation
     const kpis = await Promise.all(
       mdxFiles.map(async (file) => {
-        const filePath = path.join(kpiDir, file)
-        const content = await fs.readFile(filePath, 'utf8')
-        const { data } = matter(content)
+        const filePath = path.join(kpiDir, file);
+        const content = await fs.readFile(filePath, 'utf8');
+        const { data } = matter(content);
         
         return {
           abbreviation: data.abbreviation,
           slug: file.replace(/\.mdx$/, '')
-        }
+        };
       })
-    )
+    );
     
     // Group KPIs by first letter of abbreviation
     const alphabetMap = kpis.reduce((acc, kpi) => {
       if (!kpi.abbreviation) return acc;
-      const firstLetter = kpi.abbreviation.charAt(0).toLowerCase()
+      const firstLetter = kpi.abbreviation.charAt(0).toLowerCase();
       
       if (!acc[firstLetter]) {
-        acc[firstLetter] = []
+        acc[firstLetter] = [];
       }
       
-      acc[firstLetter].push(kpi)
-      return acc
-    }, {})
+      acc[firstLetter].push(kpi);
+      return acc;
+    }, {});
     
-    return alphabetMap
+    return alphabetMap;
   } catch (error) {
-    console.error('Error getting alphabet map:', error)
-    return {}
+    console.error('Error getting alphabet map:', error);
+    return {};
   }
 }
 
 export async function generateMetadata({ params }) {
-  const { lang } = params
-  const dictionary = await getDictionary(lang)
+  const { lang } = params;
+  const dictionary = await getDictionary(lang);
   
   return {
     title: dictionary.siteTitle,
     description: dictionary.siteDescription,
-  }
+  };
 }
 
-export default async function Home({ params }) {
-  const { lang } = params
-  const dictionary = await getDictionary(lang)
+export default async function HomePage({ params }) {
+  const { lang } = params;
+  const dictionary = await getDictionary(lang);
   
   // Get collections and alphabet map
-  const collections = await getCollections()
-  const alphabetMap = await getAlphabetMap()
+  const collections = await getCollections();
+  const alphabetMap = await getAlphabetMap();
   
   // Get alphabet letters with counts
   const alphabetLetters = Object.keys(alphabetMap).sort().map(letter => ({
     letter: letter.toUpperCase(),
     count: alphabetMap[letter].length
-  }))
+  }));
   
   return (
     <div data-pagefind-body>
@@ -185,5 +189,5 @@ export default async function Home({ params }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

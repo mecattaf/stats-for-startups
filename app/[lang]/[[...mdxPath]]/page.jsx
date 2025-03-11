@@ -38,10 +38,8 @@ export async function generateStaticParams() {
     }
   }
 
-  // Add the root page for each language
-  for (const lang of supportedLangs) {
-    results.push({ lang, mdxPath: [] });
-  }
+  // IMPORTANT: We removed the addition of empty mdxPath entries here
+  // to avoid routing conflicts with app/[lang]/page.jsx
 
   return results;
 }
@@ -81,6 +79,11 @@ export async function generateMetadata({ params }) {
 
 export default async function MDXPage({ params }) {
   const { lang, mdxPath = [] } = params;
+  
+  // Don't handle empty paths - let app/[lang]/page.jsx handle those
+  if (mdxPath.length === 0) {
+    return notFound();
+  }
   
   try {
     // Get page data for rendering
