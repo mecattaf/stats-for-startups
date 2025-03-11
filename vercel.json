@@ -1,0 +1,20 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/kpis/:slug",
+      "destination": "/kpis/:slug/"
+    },
+    {
+      "source": "/collections/:slug",
+      "destination": "/collections/:slug/"
+    },
+    {
+      "source": "/tags/:category/:slug",
+      "destination": "/tags/:category/:slug/"
+    }
+  ],
+  "cleanUrls": true
+}

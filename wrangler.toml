@@ -1,0 +1,13 @@
+name = "stats-for-startups"
+compatibility_date = "2023-06-28"
+compatibility_flags = ["nodejs_compat"]
+
+# Specify the main entry point
+main = ".vercel/output/static/index.html"
+
+# Configure the site settings
+[site]
+bucket = ".vercel/output/static"
+
+[build]
+command = "npm run build"
