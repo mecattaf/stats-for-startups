@@ -111,3 +111,61 @@ a {
 .reference a {
   @apply underline hover:text-charge-blue font-normal;
 }
+
+/* Network background styling for homepage */
+.network {
+  background-color: #05021a;
+  background-image: linear-gradient(to bottom, #05021a, #050931);
+}
+
+.network::after {
+  content: '';
+  background-image: url('/img/bg-network.svg');
+  width: 60%;
+  height: 800px;
+  top: -120px;
+  right: 0;
+  position: absolute;
+  opacity: 0.1;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Glass effect styling */
+.glass {
+  background-color: rgba(255, 255, 255, 0.01);
+}
+
+/* Transitions and animations */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.up-enter-active,
+.up-leave-active {
+  transition: transform 0.5s;
+  transform: translateY(0);
+}
+
+.up-enter, .up-leave-to {
+  transform: translateY(100%);
+}
+
+/* KaTeX styling overrides */
+.katex-display {
+  @apply my-6 overflow-x-auto overflow-y-hidden;
+}
+
+/* Nextra v4 with Tailwind CSS v4 specific classes */
+/* Replace any _text-primary-600 with x:text-primary-600 */
+.x\:text-primary-600 {
+  color: var(--charge-blue);
+}

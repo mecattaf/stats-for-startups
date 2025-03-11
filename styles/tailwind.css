@@ -1,11 +1,6 @@
-/* purgecss start ignore */
-
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-
-/* purgecss end ignore */
-
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 *,
 *:before,
@@ -15,12 +10,12 @@
 
 ::selection {
   background: #004dff;
-  color: white; /* WebKit/Blink Browsers */
+  color: white;
 }
 
 ::-moz-selection {
   background: #004dff; 
-  color: white; /* Gecko Browsers */
+  color: white;
 }
 
 /* Additional styling for specific elements */
@@ -99,4 +94,17 @@ button {
   .container {
     @apply px-4;
   }
+}
+
+/* Nextra v4 with Tailwind CSS v4 specific classes */
+.x\:text-primary-600 { 
+  color: var(--charge-blue);
+}
+
+.x\:bg-primary-50 {
+  background-color: rgba(0, 77, 255, 0.05);
+}
+
+.x\:border-primary-100 {
+  border-color: rgba(0, 77, 255, 0.1);
 }

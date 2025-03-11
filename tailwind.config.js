@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     './app/**/*.{js,jsx,ts,tsx,md,mdx}',
     './content/**/*.{md,mdx}',
     './mdx-components.jsx',
     './components/**/*.{js,jsx,ts,tsx}',
+    './node_modules/nextra-theme-docs/dist/**/*.js',
   ],
   darkMode: 'class', // Enable class-based dark mode
   theme: {
