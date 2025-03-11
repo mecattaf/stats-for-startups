@@ -7,7 +7,7 @@
     "build": "next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint --cache --max-warnings 0 .",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:deploy": "npx wrangler pages deploy .vercel/output/static",
     "pages:dev": "npx wrangler pages dev .vercel/output/static --compatibility-flag=nodejs_compat"
