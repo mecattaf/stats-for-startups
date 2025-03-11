@@ -1,7 +1,6 @@
-import { useMDXComponents as useNextraMDXComponents } from 'nextra/mdx'
+import { useMDXComponents as useNextraMDXComponents } from 'nextra-theme-docs'
 import Link from 'next/link'
 import Image from 'next/image'
-import { BlockMath, InlineMath } from './app/_components/features/Math'
 
 export function useMDXComponents(components) {
   // Get the default components from Nextra
@@ -30,10 +29,10 @@ export function useMDXComponents(components) {
       )
     },
     
-    // Use Next.js Image component for optimized images
+    // Use Next.js Image component for optimized images (with unoptimized option for Cloudflare)
     img: ({ src, alt, ...props }) => {
-      // For external images
-      if (src && src.startsWith('http')) {
+      // For external images or SVGs
+      if (src && (src.startsWith('http') || src.endsWith('.svg'))) {
         return <img src={src} alt={alt || ''} {...props} />
       }
       
@@ -44,42 +43,14 @@ export function useMDXComponents(components) {
           alt={alt || ''}
           width={props.width || 800}
           height={props.height || 500}
+          unoptimized={true} // Required for Cloudflare Pages
           {...props}
           className={`rounded-md ${props.className || ''}`}
         />
       )
     },
     
-    // Math components
-    BlockMath,
-    InlineMath,
-    
-    // For inline math, we'll use a special syntax: $...$
-    // This requires special handling in the mdx processor
-    code: ({ children, className, ...props }) => {
-      const match = /language-(\w+)/.exec(className || '')
-      
-      if (match && match[1] === 'math') {
-        return <BlockMath>{String(children).trim()}</BlockMath>
-      }
-      
-      if (match && match[1] === 'inlinemath') {
-        return <InlineMath>{String(children).trim()}</InlineMath>
-      }
-      
-      // Use the default Nextra code component for regular code blocks
-      return nextraComponents.code({ children, className, ...props })
-    },
-    
-    // Add custom styling for footnote references
-    sup: (props) => (
-      <sup 
-        {...props} 
-        className="text-xs font-medium text-gray-500 cursor-pointer hover:text-blue-600"
-      />
-    ),
-    
-    // Any other custom components
+    // Any custom components you want to add
     ...components
   }
 }

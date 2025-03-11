@@ -9,7 +9,7 @@
 
 /* Base styles */
 body {
-  @apply text-gray-800;
+  @apply text-gray-800 dark:text-gray-100;
   font-feature-settings: 'rlig' 1, 'calt' 1;
 }
 
@@ -139,27 +139,20 @@ a {
   background-color: rgba(255, 255, 255, 0.01);
 }
 
-/* Transitions and animations */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-.up-enter-active,
-.up-leave-active {
-  transition: transform 0.5s;
-  transform: translateY(0);
-}
-
-.up-enter, .up-leave-to {
-  transform: translateY(100%);
-}
-
 /* KaTeX styling overrides */
 .katex-display {
   @apply my-6 overflow-x-auto overflow-y-hidden;
+}
+
+/* Nextra v4 specific classes with Tailwind v4 - replace _* with x:* */
+.x\:text-primary-600 {
+  color: var(--charge-blue);
+}
+
+.x\:bg-primary-50 {
+  background-color: rgba(0, 77, 255, 0.05);
+}
+
+.x\:border-primary-100 {
+  border-color: rgba(0, 77, 255, 0.1);
 }
