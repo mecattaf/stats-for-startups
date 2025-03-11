@@ -1,0 +1,102 @@
+/* purgecss start ignore */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+
+/* purgecss end ignore */
+
+@import 'tailwindcss/utilities';
+
+*,
+*:before,
+*:after {
+  @apply box-border;
+}
+
+::selection {
+  background: #004dff;
+  color: white; /* WebKit/Blink Browsers */
+}
+
+::-moz-selection {
+  background: #004dff; 
+  color: white; /* Gecko Browsers */
+}
+
+/* Additional styling for specific elements */
+
+/* Code blocks styling */
+pre {
+  @apply rounded-md p-4 my-4 overflow-x-auto;
+}
+
+code {
+  @apply font-mono text-sm;
+}
+
+/* Tables styling */
+table {
+  @apply w-full border-collapse my-6;
+}
+
+thead {
+  @apply bg-gray-50;
+}
+
+th {
+  @apply px-4 py-2 text-left font-semibold border-b;
+}
+
+td {
+  @apply px-4 py-2 border-b border-gray-200;
+}
+
+/* Blockquotes styling */
+blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic my-6;
+}
+
+/* Forms styling */
+input, textarea, select {
+  @apply border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-charge focus:border-transparent;
+}
+
+button {
+  @apply px-4 py-2 rounded-md transition-colors;
+}
+
+/* Dark mode overrides */
+.dark body {
+  @apply bg-gray-900 text-gray-100;
+}
+
+.dark th {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark td {
+  @apply border-gray-700;
+}
+
+.dark blockquote {
+  @apply border-gray-600;
+}
+
+.dark input, .dark textarea, .dark select {
+  @apply bg-gray-800 border-gray-700;
+}
+
+/* Mobile responsive adjustments */
+@media screen and (max-width: 640px) {
+  h1 {
+    @apply text-2xl;
+  }
+  
+  h2 {
+    @apply text-xl;
+  }
+  
+  .container {
+    @apply px-4;
+  }
+}

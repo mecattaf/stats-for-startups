@@ -1,0 +1,7 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>StatsForStartups.com</ShortName>
+  <Description>Stats For Startups was created because there was no central academic repository for KPIs, we at Charge are changing that.</Description>
+  <Url type="text/html" method="get" template="https://statsforstartups.com/query/?filterCondition={searchTerms}"/>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image height="32" width="32" type="image/png">https://statsforstartups.com/favicon.png</Image>
+</OpenSearchDescription>

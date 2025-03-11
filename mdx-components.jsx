@@ -1,5 +1,7 @@
 import { useMDXComponents as useNextraMDXComponents } from 'nextra/mdx'
 import Link from 'next/link'
+import Image from 'next/image'
+import { BlockMath, InlineMath } from './app/_components/features/Math'
 
 export function useMDXComponents(components) {
   // Get the default components from Nextra
@@ -8,6 +10,7 @@ export function useMDXComponents(components) {
   // Customize components here
   return {
     ...nextraComponents,
+    
     // Override the default link component to use Next.js Link for internal links
     a: ({ href, children, ...props }) => {
       // Check if the link is internal or external
@@ -27,6 +30,47 @@ export function useMDXComponents(components) {
       )
     },
     
+    // Use Next.js Image component for optimized images
+    img: ({ src, alt, ...props }) => {
+      // For external images
+      if (src && src.startsWith('http')) {
+        return <img src={src} alt={alt || ''} {...props} />
+      }
+      
+      // For local images
+      return (
+        <Image
+          src={src}
+          alt={alt || ''}
+          width={props.width || 800}
+          height={props.height || 500}
+          {...props}
+          className={`rounded-md ${props.className || ''}`}
+        />
+      )
+    },
+    
+    // Math components
+    BlockMath,
+    InlineMath,
+    
+    // For inline math, we'll use a special syntax: $...$
+    // This requires special handling in the mdx processor
+    code: ({ children, className, ...props }) => {
+      const match = /language-(\w+)/.exec(className || '')
+      
+      if (match && match[1] === 'math') {
+        return <BlockMath>{String(children).trim()}</BlockMath>
+      }
+      
+      if (match && match[1] === 'inlinemath') {
+        return <InlineMath>{String(children).trim()}</InlineMath>
+      }
+      
+      // Use the default Nextra code component for regular code blocks
+      return nextraComponents.code({ children, className, ...props })
+    },
+    
     // Add custom styling for footnote references
     sup: (props) => (
       <sup 
@@ -35,7 +79,7 @@ export function useMDXComponents(components) {
       />
     ),
     
-    // Add any other custom component overrides
+    // Any other custom components
     ...components
   }
 }

@@ -151,4 +151,19 @@ export default function CollectionsPage() {
                     <h3 className="text-lg font-serif text-gray-400 font-normal mb-3">
                       {collection.category}
                     </h3>
-                    <h2 className="text-3xl tracking-wider
+                    <h2 className="text-3xl tracking-wider font-serif mb-2 font-bold">
+                      {collection.name}
+                    </h2>
+                    <p className="text-gray-400 mt-1 font-light max-w-md">
+                      {collection.short}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
