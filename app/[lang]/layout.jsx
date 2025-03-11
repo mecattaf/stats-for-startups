@@ -1,20 +1,20 @@
-import '@/styles/globals.css'
-import { Inter } from 'next/font/google'
-import { Head } from 'nextra/components'
-import { getPageMap } from 'nextra/page-map'
-import Header from '@/app/_components/layout/Header'
-import Footer from '@/app/_components/layout/Footer'
-import { getDictionary, getDirection } from '@/lib/i18n/getDictionary'
+import '@/styles/globals.css';
+import { Inter } from 'next/font/google';
+import { Head, Search } from 'nextra/components';
+import { getPageMap } from 'nextra/page-map';
+import Header from '@/app/_components/layout/Header';
+import Footer from '@/app/_components/layout/Footer';
+import { getDictionary, getDirection } from '@/lib/i18n/getDictionary';
 
 // Load Inter font
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-})
+});
 
 export async function generateMetadata({ params }) {
-  const { lang } = params
-  const dictionary = await getDictionary(lang)
+  const { lang } = params;
+  const dictionary = await getDictionary(lang);
   
   return {
     title: {
@@ -45,14 +45,14 @@ export async function generateMetadata({ params }) {
       description: dictionary.siteDescription,
       images: ['https://statsforstartups.com/sfs-social-banner-min.png']
     }
-  }
+  };
 }
 
 export default async function LocaleLayout({ children, params }) {
-  const { lang } = params
-  const pageMap = await getPageMap(lang)
-  const direction = getDirection(lang)
-  const dictionary = await getDictionary(lang)
+  const { lang } = params;
+  const pageMap = await getPageMap(lang);
+  const direction = getDirection(lang);
+  const dictionary = await getDictionary(lang);
   
   return (
     <html 
@@ -105,5 +105,5 @@ export default async function LocaleLayout({ children, params }) {
         <Footer dictionary={dictionary} currentLang={lang} />
       </body>
     </html>
-  )
+  );
 }

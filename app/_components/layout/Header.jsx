@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import SearchButton from '../search/SearchButton'
-import SearchDialog from '../search/SearchDialog'
+import { Search } from 'nextra/components'
 import { SUPPORTED_LANGUAGES } from '@/lib/i18n/config'
 
 export default function Header({ dictionary, currentLang, pageMap }) {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  
   // Navigation items from dictionary
   const nav = dictionary?.navigation || {
     home: 'Home',
@@ -65,17 +62,18 @@ export default function Header({ dictionary, currentLang, pageMap }) {
               {nav.collections}
             </Link>
             
-            {/* Search button */}
-            <div className="hidden md:block ml-4 md:mr-4">
-              <SearchButton 
-                onClick={() => setIsSearchOpen(true)} 
+            {/* Nextra Search component */}
+            <div className="hidden md:block ml-4 md:mr-4 w-64">
+              <Search 
                 placeholder={searchDict.placeholder}
-                buttonText={searchDict.button}
+                loading={searchDict.loading}
+                errorText={searchDict.error}
+                emptyResult={searchDict.noResults}
               />
             </div>
 
             {/* Charge VC Link */}
-            
+            <a
               href="https://charge.vc"
               target="_blank"
               rel="noopener noreferrer"
@@ -97,27 +95,15 @@ export default function Header({ dictionary, currentLang, pageMap }) {
               />
             </a>
             
-            {/* Mobile search icon */}
-            <button
-              className="md:hidden ml-3 p-2 text-gray-400 hover:text-white focus:outline-none"
-              onClick={() => setIsSearchOpen(true)}
-              aria-label={searchDict.button}
-            >
-              <svg 
-                className="w-5 h-5" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-                />
-              </svg>
-            </button>
+            {/* Mobile search */}
+            <div className="md:hidden ml-3">
+              <Search 
+                placeholder={searchDict.placeholder}
+                loading={searchDict.loading}
+                errorText={searchDict.error}
+                emptyResult={searchDict.noResults}
+              />
+            </div>
             
             {/* Language Selector - Hidden for now as we only support English */}
             {SUPPORTED_LANGUAGES.length > 1 && (
@@ -148,14 +134,6 @@ export default function Header({ dictionary, currentLang, pageMap }) {
           </div>
         </div>
       </div>
-      
-      {/* Search Dialog */}
-      <SearchDialog 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)}
-        dictionary={dictionary?.search || {}}
-        currentLang={currentLang}
-      />
     </>
   )
 }

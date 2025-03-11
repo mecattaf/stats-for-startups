@@ -1,9 +1,11 @@
+// app/[lang]/page.jsx - Serves as the root page for each language
 import fs from 'fs/promises'
 import path from 'path'
 import matter from 'gray-matter'
 import Link from 'next/link'
 import Image from 'next/image'
 import CollectionCard from '@/app/_components/features/CollectionCard'
+import { getDictionary } from '@/lib/i18n/getDictionary'
 
 // Get collections from MDX files
 async function getCollections() {
@@ -67,6 +69,7 @@ async function getAlphabetMap() {
     
     // Group KPIs by first letter of abbreviation
     const alphabetMap = kpis.reduce((acc, kpi) => {
+      if (!kpi.abbreviation) return acc;
       const firstLetter = kpi.abbreviation.charAt(0).toLowerCase()
       
       if (!acc[firstLetter]) {
@@ -84,7 +87,20 @@ async function getAlphabetMap() {
   }
 }
 
-export default async function Home() {
+export async function generateMetadata({ params }) {
+  const { lang } = params
+  const dictionary = await getDictionary(lang)
+  
+  return {
+    title: dictionary.siteTitle,
+    description: dictionary.siteDescription,
+  }
+}
+
+export default async function Home({ params }) {
+  const { lang } = params
+  const dictionary = await getDictionary(lang)
+  
   // Get collections and alphabet map
   const collections = await getCollections()
   const alphabetMap = await getAlphabetMap()
@@ -96,7 +112,7 @@ export default async function Home() {
   }))
   
   return (
-    <div>
+    <div data-pagefind-body>
       {/* Hero Section with Network Background */}
       <div id="topDiv" className="network relative pt-12 pb-24 px-4 bg-primary">
         <div className="container mx-auto">
@@ -110,10 +126,10 @@ export default async function Home() {
                 {/* If it's the last card, show About link */}
                 {index === 4 ? (
                   <Link
-                    href="/about"
+                    href={`/${lang}/about`}
                     className="border-gray-700 py-4 px-6 mb-6 md:mb-auto cursor-pointer bg-gray-400 bg-opacity-10 tracking-wider text-white text-right font-normal hover:bg-opacity-20 font-serif"
                   >
-                    Our Story →
+                    {dictionary.common?.aboutLink || "Our Story"} →
                   </Link>
                 ) : null}
                 
@@ -130,7 +146,7 @@ export default async function Home() {
                       A-Z
                     </strong>
                     <br />
-                    All {Object.values(alphabetMap).flat().length} metrics
+                    {dictionary.alphabet?.all || "All"} {Object.values(alphabetMap).flat().length} {dictionary.common?.metrics || "metrics"}
                   </Link>
                 ) : null}
               </div>
@@ -141,13 +157,15 @@ export default async function Home() {
       
       {/* Alphabet Explorer Section */}
       <div id="alphabet-explorer" className="container mx-auto py-8">
-        <h2 className="text-3xl font-serif text-center mb-6">Explore all KPIs</h2>
+        <h2 className="text-3xl font-serif text-center mb-6">
+          {dictionary.alphabet?.explore || "Explore all KPIs"}
+        </h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 p-4">
           {alphabetLetters.map((item) => (
             <Link
               key={item.letter}
-              href={`/kpis/browse/${item.letter.toLowerCase()}`}
+              href={`/${lang}/kpis/browse/${item.letter.toLowerCase()}`}
               className={`
                 px-4 bg-opacity-20 border-2 text-center
                 ${item.count === 0 
@@ -169,27 +187,3 @@ export default async function Home() {
     </div>
   )
 }
-
-// CSS for network background
-export const style = `
-.network {
-  background-color: #05021a;
-  background-image: linear-gradient(to bottom, #05021a, #050931);
-}
-
-.network::after {
-  content: '';
-  background-image: url('/img/bg-network.svg');
-  width: 60%;
-  height: 800px;
-  top: -120px;
-  right: 0;
-  position: absolute;
-  opacity: 0.1;
-  display: inline-block;
-  background-repeat: no-repeat;
-  background-size: cover;
-  z-index: 0;
-  pointer-events: none;
-}
-`

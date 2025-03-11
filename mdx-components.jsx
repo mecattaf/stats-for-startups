@@ -1,17 +1,11 @@
-import { useMDXComponents as useNextraMDXComponents } from 'nextra-theme-docs'
+// mdx-components.jsx - root level
 import Link from 'next/link'
 import Image from 'next/image'
 import { BlockMath, InlineMath } from './components/Math'
 
 export function useMDXComponents(components) {
-  // Get the default components from Nextra
-  const nextraComponents = useNextraMDXComponents()
-  
-  // Customize components here
   return {
-    ...nextraComponents,
-    
-    // Override the default link component to use Next.js Link for internal links
+    // Handle links (internal vs external)
     a: ({ href, children, ...props }) => {
       // Check if the link is internal or external
       if (href && (href.startsWith('/') || href.startsWith('#'))) {
@@ -68,8 +62,8 @@ export function useMDXComponents(components) {
         return <InlineMath>{String(children).trim()}</InlineMath>
       }
       
-      // Use the default Nextra code component for regular code blocks
-      return nextraComponents.code({ children, className, ...props })
+      // Use the default code component for regular code blocks
+      return <code className={className} {...props}>{children}</code>
     },
     
     // Add custom styling for footnote references

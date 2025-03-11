@@ -1,7 +1,7 @@
-import { getPageMap, getPageData } from 'nextra/page-map'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import { notFound } from 'next/navigation'
-import { getDictionary } from '@/lib/i18n/getDictionary'
+import { getPageMap, getPageData } from 'nextra/page-map';
+import { MDXRemote } from 'nextra/mdx-remote';
+import { notFound } from 'next/navigation';
+import { getDictionary } from '@/lib/i18n/getDictionary';
 
 // Generate static params for all MDX pages
 export async function generateStaticParams() {
@@ -94,9 +94,6 @@ export default async function MDXPage({ params }) {
     }
     
     const { content, frontMatter, title, structuredData } = pageData;
-    
-    // Check for any custom page layouts based on path
-    const pagePath = mdxPath.join('/') || 'index';
     
     return (
       <div className="container mx-auto px-4 py-8">

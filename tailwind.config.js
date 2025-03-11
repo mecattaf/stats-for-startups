@@ -5,8 +5,8 @@ export default {
     './content/**/*.{md,mdx}',
     './mdx-components.jsx',
     './components/**/*.{js,jsx,ts,tsx}',
-    './node_modules/nextra-theme-docs/dist/**/*.js',
-    './node_modules/nextra/dist/**/*.js',
+    './node_modules/nextra/**/*.js',
+    './node_modules/nextra-theme-docs/**/*.js',
   ],
   darkMode: 'class', // Enable class-based dark mode
   theme: {
