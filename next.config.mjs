@@ -3,6 +3,7 @@ import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 
 // Create the Nextra configuration
+// Removed: theme, themeConfig, flexsearch keys
 const withNextra = nextra({
   // MDX options for rendering math equations
   mdxOptions: {
@@ -10,17 +11,13 @@ const withNextra = nextra({
     rehypePlugins: [rehypeKatex]
   },
   
-  // Disable flexsearch (using Pagefind instead)
-  // Note: In Nextra 4, simply omit the flexsearch key instead of setting it to false
-  
   // Static file handling
   staticImage: true,
   
   // Default code block configurations
   defaultShowCopyCode: true,
   
-  // Content directory settings (if using content directory convention)
-  // Replace '/docs' with your actual content path if different
+  // Content directory settings (using content directory convention)
   contentDirBasePath: '/en',
   
   // Optional: Configure custom tag styling

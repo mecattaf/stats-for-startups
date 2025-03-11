@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
 import { Head, Banner, Search } from 'nextra/components'
-import { Layout, useConfig } from 'nextra-theme-docs'
+import { Layout } from 'nextra-theme-docs'
 import './globals.css'
 
 // Load Inter font
@@ -63,7 +63,7 @@ export default function RootLayout({ children }) {
       </Head>
       <body className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-50">
         <Layout
-          // Configure your theme options here
+          // Logo
           logo={<span className="font-bold">Stats For Startups</span>}
           
           // Repository link
@@ -88,17 +88,9 @@ export default function RootLayout({ children }) {
           }}
           
           // Project link
-          project={{
-            link: 'https://github.com/mecattaf/stats-for-startups',
-          }}
+          projectLink="https://github.com/mecattaf/stats-for-startups"
           
-          // Search options
-          search={{
-            placeholder: 'Search metrics...',
-            emptyResult: 'No results found',
-          }}
-          
-          // Dark mode
+          // Theme switching
           darkMode={true}
           
           // Sidebar options
@@ -113,6 +105,7 @@ export default function RootLayout({ children }) {
             { locale: 'en', name: 'English' }
           ]}
         >
+          {/* You can add Search component here for global search */}
           {children}
         </Layout>
       </body>
