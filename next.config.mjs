@@ -1,6 +1,12 @@
 import nextra from 'nextra';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get directory name for ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create the Nextra configuration
 const withNextra = nextra({
@@ -12,7 +18,6 @@ const withNextra = nextra({
   
   // Set content directory base path to '/content'
   contentDirBasePath: '/content',
-
   
   // Static file handling
   staticImage: true,
@@ -41,5 +46,11 @@ export default withNextra({
   // Cloudflare Pages specific optimizations
   experimental: {
     optimizePackageImports: ['nextra', 'nextra/components']
+  },
+  
+  // Configure path aliases
+  webpack: (config) => {
+    config.resolve.alias['@'] = path.resolve(__dirname);
+    return config;
   }
 });
