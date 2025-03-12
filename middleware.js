@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server'
-import { LANGUAGE_CODES, DEFAULT_LANGUAGE, isLanguageSupported } from './lib/i18n/config'
+import { NextResponse } from 'next/server';
+import { LANGUAGE_CODES, DEFAULT_LANGUAGE, isLanguageSupported } from './lib/i18n/config';
 
 /**
  * Regex to match static files that should be excluded from middleware processing
  * - _next/* files (internal Next.js files)
  * - public assets with file extensions
  * - API routes
+ * - _pagefind files for search
  */
-const PUBLIC_FILE = /\.(.*)$/
-const EXCLUDED_PATHS = /^(\/(_next|api)|\/favicon\.ico)/
+const PUBLIC_FILE = /\.(.*)$/;
+const EXCLUDED_PATHS = /^(\/(_next|api|_pagefind)|\/favicon\.ico)/;
 
 /**
  * Middleware function for handling internationalization and content path rewrites
@@ -24,14 +25,14 @@ const EXCLUDED_PATHS = /^(\/(_next|api)|\/favicon\.ico)/
  */
 export async function middleware(req) {
   // Get the pathname from the URL
-  const { pathname } = req.nextUrl
+  const { pathname } = req.nextUrl;
   
   // Skip middleware for excluded paths (static files, api routes, etc)
   if (
     EXCLUDED_PATHS.test(pathname) ||
     PUBLIC_FILE.test(pathname)
   ) {
-    return
+    return;
   }
   
   // Check if the request is for the root path
@@ -39,49 +40,46 @@ export async function middleware(req) {
     // Get the preferred language from the cookie or defaults to the default language
     const preferredLanguage = 
       req.cookies.get('NEXT_LOCALE')?.value || 
-      DEFAULT_LANGUAGE
+      DEFAULT_LANGUAGE;
     
     // Create the URL for the redirect
-    const redirectUrl = new URL(`/${preferredLanguage}`, req.url)
+    const redirectUrl = new URL(`/${preferredLanguage}`, req.url);
     
     // Redirect to the language path
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(redirectUrl);
   }
   
   // Check if the URL starts with a supported language code
-  const pathnameSegments = pathname.split('/')
-  const langCode = pathnameSegments[1]?.toLowerCase()
+  const pathnameSegments = pathname.split('/');
+  const langCode = pathnameSegments[1]?.toLowerCase();
   
   // If the first segment is not a supported language code, redirect to the default language
   if (!isLanguageSupported(langCode)) {
     // Remove the first empty segment from the pathname
-    const pathWithoutLang = pathnameSegments.slice(1).join('/')
+    const pathWithoutLang = pathnameSegments.slice(1).join('/');
     
     // Create the URL for the redirect
-    const redirectUrl = new URL(`/${DEFAULT_LANGUAGE}/${pathWithoutLang}`, req.url)
+    const redirectUrl = new URL(`/${DEFAULT_LANGUAGE}/${pathWithoutLang}`, req.url);
     
     // Redirect to the language path
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(redirectUrl);
   }
   
   // Handle rewrites for direct content paths
   // Example: /en/about should be handled by /en/content/about
   if (pathnameSegments.length > 2 && 
-      pathnameSegments[2] !== 'content' && 
-      pathnameSegments[2] !== 'kpis' &&  // Skip specific route patterns that should not be rewritten
-      pathnameSegments[2] !== 'collections' &&
-      pathnameSegments[2] !== 'tags') {
+      !['content', 'kpis', 'collections', 'tags', '_next', 'api', '_pagefind', 'img'].includes(pathnameSegments[2])) {
     
     // Create rewrite path
-    const contentPath = ['', pathnameSegments[1], 'content', ...pathnameSegments.slice(2)].join('/')
-    const rewriteUrl = new URL(contentPath, req.url)
+    const contentPath = ['', pathnameSegments[1], 'content', ...pathnameSegments.slice(2)].join('/');
+    const rewriteUrl = new URL(contentPath, req.url);
     
     // Rewrite to the content path
-    return NextResponse.rewrite(rewriteUrl)
+    return NextResponse.rewrite(rewriteUrl);
   }
   
   // If the language code is valid and no other conditions are met, continue with the request
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 /**
@@ -90,6 +88,6 @@ export async function middleware(req) {
 export const config = {
   matcher: [
     // Skip static files, api routes, etc
-    '/((?!_next|api|favicon.ico).*)'
+    '/((?!_next|api|_pagefind|favicon.ico).*)'
   ]
-}
+};
