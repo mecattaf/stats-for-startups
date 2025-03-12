@@ -10,14 +10,14 @@ const withNextra = nextra({
     rehypePlugins: [rehypeKatex]
   },
   
+  // Content directory configuration
+  contentDirBasePath: '/content',
+  
   // Static file handling
   staticImage: true,
   
   // Default code block configurations
   defaultShowCopyCode: true,
-  
-  // Content directory settings for the content/en folder
-  contentDirBasePath: '/content',
   
   // Optional: Configure custom tag styling
   whiteListTagsStyling: ['h1', 'h2', 'h3']
@@ -39,6 +39,6 @@ export default withNextra({
   
   // Cloudflare Pages specific optimizations
   experimental: {
-    optimizePackageImports: ['nextra', 'nextra/components', 'nextra-theme-docs']
+    optimizePackageImports: ['nextra', 'nextra/components']
   }
 });

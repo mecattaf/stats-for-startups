@@ -38,15 +38,22 @@ export async function generateStaticParams() {
     }
   }
 
-  // IMPORTANT: We removed the addition of empty mdxPath entries here
-  // to avoid routing conflicts with app/[lang]/page.jsx
-
+  // IMPORTANT: We do NOT add empty mdxPath entries here
+  // This avoids the routing conflict with app/[lang]/page.jsx
+  
   return results;
 }
 
 // Generate metadata for the page
 export async function generateMetadata({ params }) {
   const { lang, mdxPath = [] } = params;
+  
+  // Don't generate metadata for empty paths to avoid conflict
+  if (mdxPath.length === 0) {
+    return {
+      title: 'Not Found',
+    };
+  }
   
   try {
     // Get page data for metadata

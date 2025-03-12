@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import CollectionCard from '@/app/_components/features/CollectionCard';
 import { getDictionary } from '@/lib/i18n/getDictionary';
+import { getPageData } from 'nextra/page-map';
 
 // Generate static params for the language pages
 export function generateStaticParams() {
@@ -95,6 +96,24 @@ export async function generateMetadata({ params }) {
   const { lang } = params;
   const dictionary = await getDictionary(lang);
   
+  // Try to get index page content from the content directory
+  try {
+    const pageData = await getPageData({
+      locale: lang,
+      mdxPath: []
+    });
+    
+    if (pageData && pageData.frontMatter && pageData.frontMatter.title) {
+      return {
+        title: pageData.frontMatter.title,
+        description: pageData.frontMatter.description || dictionary.siteDescription,
+      };
+    }
+  } catch (error) {
+    console.error('Error loading index page metadata:', error);
+  }
+  
+  // Fall back to default metadata
   return {
     title: dictionary.siteTitle,
     description: dictionary.siteDescription,
