@@ -10,8 +10,9 @@ const withNextra = nextra({
     rehypePlugins: [rehypeKatex]
   },
   
-  // Set content directory base path to 'content'
-  contentDirBasePath: 'content',
+  // Set content directory base path to '/content'
+  contentDirBasePath: '/content',
+
   
   // Static file handling
   staticImage: true,
