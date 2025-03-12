@@ -1,51 +1,57 @@
 ---
-title: Gross Burn Rate
-abbreviation: GBR
+title: Gross Churn Rate
+abbreviation: GCR
 alternativeNames: []
-updatedAt: '2021-07-20T12:45:57'
+updatedAt: '2021-07-21T15:58:03'
 tags:
+- name: Post Launch Market Testing
+  category: Startup stage
+  slug: post-launch
 - name: Growth
   category: Startup stage
   slug: growth
 relatedKpis:
-- name: Previously Raised
-  abbreviation: Prev
-  slug: Previously-Raised
-- name: Cash Balance
-  abbreviation: Cash
-  slug: cash-balance
-- name: Capital Consumption Ratio
-  abbreviation: ConR
-  slug: capital-consumption-ratio
-- name: Burn Multiple
-  abbreviation: BM
-  slug: burn-multiple
-
+- name: Customer Churn Rate
+  abbreviation: CCR
+  slug: Customer-Churn-Rate
+- name: Net Churn
+  abbreviation: NCrn
+  slug: Net-Churn
+- name: Logins to Activation
+  abbreviation: LtA
+  slug: logins-to-activation
+- name: Renewal Rate
+  abbreviation: RR
+  slug: renewal-rate
+- name: Gross Revenue Retention Rate
+  abbreviation: GRRR
+  slug: gross-revenue-retention-rate
 ---
 
-# Gross Burn Rate (GBR)
+# Gross Churn Rate (GCR)
 
-How much money you keep from every dollar spent on making and selling the product. This evaluates a company's operating expenses.It is calculated by summing all its operating expenses such as rent, salaries, and other overhead, and is often measured on a monthly basis. It also provides insight into a company’s cost drivers and efficiency, regardless of revenue. [^1]
+A calculation of how much revenue is lost by customers not renewing or canceling during a given period of time.
+
+A typical "good" churn rate for SaaS companies that target small businesses is 3-5% monthly. The larger the businesses you target, the lower your churn rate has to be as the market is smaller. For an enterprise-level product, churn should be <1% monthly.
+
+A study from Recurly found that the average churn rate for businesses was 5% for B2B and 7.05% for B2C.
 
 ## Calculation
 
 $$
-\textrm{Gross Burn Rate} = \frac{Cash}{\textrm{Monthly operating Expenses}} [^1],
-
-\textrm{Gross Burn Rate} = \frac{Expenses}{\textrm{Time Periods During Measurement}} [^2]
+\textrm{Revenue Churn} = \frac{\textrm{(MRR Beginning - MRR Ending) - MRR in upgrades}}{\textrm{MRR Beginning}}
 $$
-
-
 
 ## Related KPIs
 
-- [Prev - Previously Raised](/en/kpis/Previously-Raised)
-- [Cash - Cash Balance](/en/kpis/cash-balance)
-- [ConR - Capital Consumption Ratio](/en/kpis/capital-consumption-ratio)
-- [BM - Burn Multiple](/en/kpis/burn-multiple)
+- [CCR - Customer Churn Rate](/en/kpis/Customer-Churn-Rate)
+- [NCrn - Net Churn](/en/kpis/Net-Churn)
+- [LtA - Logins to Activation](/en/kpis/logins-to-activation)
+- [RR - Renewal Rate](/en/kpis/renewal-rate)
+- [GRRR - Gross Revenue Retention Rate](/en/kpis/gross-revenue-retention-rate)
 
 ## References
 
-[^1]:  Corporate Finance Institute. Retrieved May 21, 2021, from https://corporatefinanceinstitute.com/resources/knowledge/modeling/burn-rate/ [https://corporatefinanceinstitute.com/resources/knowledge/modeling/burn-rate/](https://corporatefinanceinstitute.com/resources/knowledge/modeling/burn-rate/)
-[^2]:  Corporate Finance Institute. Retrieved May 21, 2021, from https://corporatefinanceinstitute.com/resources/knowledge/modeling/burn-rate/ [https://corporatefinanceinstitute.com/resources/knowledge/modeling/burn-rate/](https://corporatefinanceinstitute.com/resources/knowledge/modeling/burn-rate/)
-[^3]:   Retrieved May 21, 2021, from https://www.thebalancesmb.com/what-does-burn-rate-mean-and-how-is-it-calculated-393196 [https://www.thebalancesmb.com/what-does-burn-rate-mean-and-how-is-it-calculated-393196](https://www.thebalancesmb.com/what-does-burn-rate-mean-and-how-is-it-calculated-393196)
+[^1]: Retrieved May 21, 2021, from https://www.salesforce.com/resources/articles/how-calculate-customer-churn-and-revenue-churn/
+[^2]: Limited, C. Retrieved May 21, 2021, from https://www.cobloom.com/blog/churn-rate-how-high-is-too-high
+[^3]: Recurly Churn Rate Benchmarks, https://recurly.com/research/churn-rate-benchmarks/
