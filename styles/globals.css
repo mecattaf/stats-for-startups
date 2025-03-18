@@ -8,135 +8,152 @@
 }
 
 /* Base styles */
-body {
-  @apply text-gray-800;
-  font-feature-settings: 'rlig' 1, 'calt' 1;
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  @apply font-serif;
-}
-
-h1 {
-  @apply text-3xl font-bold mb-4;
-}
-
-h2 {
-  @apply text-2xl font-bold mb-3 mt-6;
-}
-
-h3 {
-  @apply text-xl font-bold mb-2 mt-5;
-}
-
-p {
-  @apply my-4;
-}
-
-a {
-  @apply text-blue-600 hover:text-blue-800;
+@layer base {
+  body {
+    color: #1f2937; /* Using a direct hex value instead of text-gray-800 */
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+  
+  h1 {
+    @apply text-3xl font-bold mb-4;
+  }
+  
+  h2 {
+    @apply text-2xl font-bold mb-3 mt-6;
+  }
+  
+  h3 {
+    @apply text-xl font-bold mb-2 mt-5;
+  }
+  
+  p {
+    @apply my-4;
+  }
+  
+  a {
+    @apply text-blue-600 hover:text-blue-800;
+  }
 }
 
 /* Custom utility classes */
-.charge-blue {
-  color: var(--charge-blue);
-}
-
-.bg-primary {
-  background-color: var(--primary-color);
-}
-
-.bg-charge {
-  background-color: var(--charge-blue);
-}
-
-/* Custom container class */
-.container-custom {
-  @apply container mx-auto px-4 md:px-6;
-}
-
-/* KPI-specific styles */
-.kpi-abbreviation {
-  @apply text-5xl font-bold text-primary tracking-widest mb-4 font-serif;
-}
-
-.kpi-title {
-  @apply text-xl mb-4 font-serif font-normal;
-}
-
-.kpi-aka {
-  @apply text-gray-500 italic;
-}
-
-.kpi-section-label {
-  @apply uppercase text-gray-400 font-mono tracking-wider text-sm inline-block pb-4;
-}
-
-/* For math equations */
-.math-wrapper {
-  @apply overflow-x-auto py-4;
-}
-
-/* For tag buttons */
-.tag-button {
-  @apply inline-block bg-gray-100 text-gray-700 rounded-md px-3 py-1 text-sm font-medium mr-2 mb-2 hover:bg-gray-200;
-}
-
-/* For letter section in A-Z listing */
-.letter-section {
-  @apply relative;
-  position: relative;
-}
-
-.letter-section::after {
-  content: '';
-  position: absolute;
-  border-left: 2px solid #eee;
-  height: 100%;
-  left: 0;
-  top: 0;
-}
-
-/* Utility for clipboard icon */
-.clipboard-button {
-  @apply opacity-20 hover:opacity-100 transition-opacity;
-}
-
-/* References formatting */
-.reference {
-  @apply max-w-3xl mb-2 text-sm text-gray-700;
-}
-
-.reference a {
-  @apply underline hover:text-charge-blue font-normal;
-}
-
-/* Network background styling for homepage */
-.network {
-  background-color: #05021a;
-  background-image: linear-gradient(to bottom, #05021a, #050931);
-}
-
-.network::after {
-  content: '';
-  background-image: url('/img/bg-network.svg');
-  width: 60%;
-  height: 800px;
-  top: -120px;
-  right: 0;
-  position: absolute;
-  opacity: 0.1;
-  display: inline-block;
-  background-repeat: no-repeat;
-  background-size: cover;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Glass effect styling */
-.glass {
-  background-color: rgba(255, 255, 255, 0.01);
+@layer components {
+  .charge-blue {
+    color: var(--charge-blue);
+  }
+  
+  .bg-primary {
+    background-color: var(--primary-color);
+  }
+  
+  .bg-charge {
+    background-color: var(--charge-blue);
+  }
+  
+  /* Custom container class */
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6;
+  }
+  
+  /* KPI-specific styles */
+  .kpi-abbreviation {
+    @apply text-5xl font-bold tracking-widest mb-4 font-serif;
+    color: var(--primary-color);
+  }
+  
+  .kpi-title {
+    @apply text-xl mb-4 font-serif font-normal;
+  }
+  
+  .kpi-aka {
+    @apply italic;
+    color: #6b7280; /* Using a direct hex value instead of text-gray-500 */
+  }
+  
+  .kpi-section-label {
+    @apply uppercase font-mono tracking-wider text-sm inline-block pb-4;
+    color: #9ca3af; /* Using a direct hex value instead of text-gray-400 */
+  }
+  
+  /* For math equations */
+  .math-wrapper {
+    @apply overflow-x-auto py-4;
+  }
+  
+  /* For tag buttons */
+  .tag-button {
+    @apply inline-block rounded-md px-3 py-1 text-sm font-medium mr-2 mb-2;
+    background-color: #f3f4f6; /* Using direct hex value instead of bg-gray-100 */
+    color: #374151; /* Using direct hex value instead of text-gray-700 */
+  }
+  
+  .tag-button:hover {
+    background-color: #e5e7eb; /* Using direct hex value instead of bg-gray-200 */
+  }
+  
+  /* For letter section in A-Z listing */
+  .letter-section {
+    @apply relative;
+    position: relative;
+  }
+  
+  .letter-section::after {
+    content: '';
+    position: absolute;
+    border-left: 2px solid #eee;
+    height: 100%;
+    left: 0;
+    top: 0;
+  }
+  
+  /* Utility for clipboard icon */
+  .clipboard-button {
+    @apply opacity-20 hover:opacity-100 transition-opacity;
+  }
+  
+  /* References formatting */
+  .reference {
+    @apply max-w-3xl mb-2 text-sm;
+    color: #374151; /* Using direct hex value instead of text-gray-700 */
+  }
+  
+  .reference a {
+    @apply underline font-normal;
+  }
+  
+  .reference a:hover {
+    color: var(--charge-blue);
+  }
+  
+  /* Network background styling for homepage */
+  .network {
+    background-color: #05021a;
+    background-image: linear-gradient(to bottom, #05021a, #050931);
+  }
+  
+  .network::after {
+    content: '';
+    background-image: url('/img/bg-network.svg');
+    width: 60%;
+    height: 800px;
+    top: -120px;
+    right: 0;
+    position: absolute;
+    opacity: 0.1;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  /* Glass effect styling */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.01);
+  }
 }
 
 /* Transitions and animations */
@@ -162,10 +179,4 @@ a {
 /* KaTeX styling overrides */
 .katex-display {
   @apply my-6 overflow-x-auto overflow-y-hidden;
-}
-
-/* Nextra v4 with Tailwind CSS v4 specific classes */
-/* Replace any _text-primary-600 with x:text-primary-600 */
-.x\:text-primary-600 {
-  color: var(--charge-blue);
 }

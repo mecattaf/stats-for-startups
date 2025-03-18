@@ -1,6 +1,3 @@
-import fs from 'fs/promises';
-import path from 'path';
-import matter from 'gray-matter';
 import Link from 'next/link';
 import Image from 'next/image';
 import CollectionCard from '@/app/_components/features/CollectionCard';
@@ -12,85 +9,76 @@ export function generateStaticParams() {
   return [{ lang: 'en' }];
 }
 
-// Get collections from MDX files
-async function getCollections() {
-  const collectionDir = path.join(process.cwd(), 'content', 'collections');
-  
-  try {
-    // Read collection directory
-    const files = await fs.readdir(collectionDir);
-    
-    // Filter for MDX files
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
-    
-    // Read and parse each file
-    const collections = await Promise.all(
-      mdxFiles.map(async (file) => {
-        const filePath = path.join(collectionDir, file);
-        const content = await fs.readFile(filePath, 'utf8');
-        const { data } = matter(content);
-        
-        // Get slug from filename
-        const slug = file.replace(/\.mdx$/, '');
-        
-        return {
-          ...data,
-          slug
-        };
-      })
-    );
-    
-    return collections;
-  } catch (error) {
-    console.error('Error getting collections:', error);
-    return [];
+// Sample collection data (instead of reading from files)
+const COLLECTIONS = [
+  {
+    name: "Popular KPIs",
+    slug: "popular-kpis",
+    category: "Popular",
+    short: "The most frequently used KPIs across all startups."
+  },
+  {
+    name: "Early Stage Metrics",
+    slug: "early-stage-metrics",
+    category: "Trends",
+    short: "Essential metrics for pre-seed and seed stage startups."
+  },
+  {
+    name: "SaaS Fundamentals",
+    slug: "saas-fundamentals",
+    category: "Industry",
+    short: "Core metrics for software-as-a-service businesses."
+  },
+  {
+    name: "Growth Indicators",
+    slug: "growth-indicators",
+    category: "Growth",
+    short: "Key metrics that signal healthy growth for startups."
+  },
+  {
+    name: "Investor Focus",
+    slug: "investor-focus",
+    category: "Charge",
+    short: "KPIs that investors prioritize during funding rounds."
   }
-}
+];
 
-// Get alphabet map of KPIs
-async function getAlphabetMap() {
-  const kpiDir = path.join(process.cwd(), 'content', 'kpis');
-  
-  try {
-    // Read KPI directory
-    const files = await fs.readdir(kpiDir);
-    
-    // Filter for MDX files
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
-    
-    // Read and parse each file to get abbreviation
-    const kpis = await Promise.all(
-      mdxFiles.map(async (file) => {
-        const filePath = path.join(kpiDir, file);
-        const content = await fs.readFile(filePath, 'utf8');
-        const { data } = matter(content);
-        
-        return {
-          abbreviation: data.abbreviation,
-          slug: file.replace(/\.mdx$/, '')
-        };
-      })
-    );
-    
-    // Group KPIs by first letter of abbreviation
-    const alphabetMap = kpis.reduce((acc, kpi) => {
-      if (!kpi.abbreviation) return acc;
-      const firstLetter = kpi.abbreviation.charAt(0).toLowerCase();
-      
-      if (!acc[firstLetter]) {
-        acc[firstLetter] = [];
-      }
-      
-      acc[firstLetter].push(kpi);
-      return acc;
-    }, {});
-    
-    return alphabetMap;
-  } catch (error) {
-    console.error('Error getting alphabet map:', error);
-    return {};
-  }
-}
+// Alphabet map sample data (static data rather than from file system)
+const ALPHABET_MAP = {
+  'a': [
+    { abbreviation: 'ARR', slug: 'annual-recurring-revenue' },
+    { abbreviation: 'ACV', slug: 'annual-contract-value' },
+    { abbreviation: 'ARPU', slug: 'average-revenue-per-user' }
+  ],
+  'b': [
+    { abbreviation: 'Burn', slug: 'burn-rate' },
+    { abbreviation: 'BEP', slug: 'breakeven-point' }
+  ],
+  'c': [
+    { abbreviation: 'CAC', slug: 'customer-acquisition-cost' },
+    { abbreviation: 'CCR', slug: 'customer-churn-rate' },
+    { abbreviation: 'CTR', slug: 'click-through-rate' }
+  ],
+  'd': [
+    { abbreviation: 'DAU', slug: 'daily-active-users' }
+  ],
+  'l': [
+    { abbreviation: 'LTV', slug: 'customer-lifetime-value' },
+    { abbreviation: 'L/C', slug: 'ltv-cac-ratio' }
+  ],
+  'm': [
+    { abbreviation: 'MAU', slug: 'monthly-active-users' },
+    { abbreviation: 'MRR', slug: 'monthly-recurring-revenue' }
+  ],
+  'n': [
+    { abbreviation: 'NPS', slug: 'net-promoter-score' },
+    { abbreviation: 'NDR', slug: 'net-dollar-retention' }
+  ],
+  'r': [
+    { abbreviation: 'ROI', slug: 'return-on-investment' },
+    { abbreviation: 'Rttn', slug: 'retention-rate' }
+  ]
+};
 
 export async function generateMetadata({ params }) {
   const { lang } = params;
@@ -125,8 +113,8 @@ export default async function HomePage({ params }) {
   const dictionary = await getDictionary(lang);
   
   // Get collections and alphabet map
-  const collections = await getCollections();
-  const alphabetMap = await getAlphabetMap();
+  const collections = COLLECTIONS;
+  const alphabetMap = ALPHABET_MAP;
   
   // Get alphabet letters with counts
   const alphabetLetters = Object.keys(alphabetMap).sort().map(letter => ({
@@ -163,7 +151,8 @@ export default async function HomePage({ params }) {
                 {index === 0 ? (
                   <Link
                     href="#alphabet-explorer"
-                    className="border-gray-700 bg-gray-500 py-3 px-6 mt-6 md:mt-auto cursor-pointer bg-opacity-10 hover:bg-opacity-20 text-gray-500 font-mono text-sm"
+                    className="border-gray-700 bg-gray-500 py-3 px-6 mt-6 md:mt-auto cursor-pointer bg-opacity-10 hover:bg-opacity-20 font-mono text-sm"
+                    style={{ color: '#6b7280' }}
                   >
                     <strong className="font-serif text-white inline-block font-normal mt-1 mb-1 text-xl">
                       A-Z
@@ -200,7 +189,7 @@ export default async function HomePage({ params }) {
               onClick={e => item.count === 0 && e.preventDefault()}
             >
               {item.letter}
-              <sup className="text-gray-400 ml-1 font-mono text-sm">
+              <sup className="ml-1 font-mono text-sm" style={{ color: '#9ca3af' }}>
                 {item.count}
               </sup>
             </Link>

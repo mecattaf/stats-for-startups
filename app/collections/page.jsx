@@ -1,9 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import fs from 'fs/promises'
-import path from 'path'
-import matter from 'gray-matter'
 import Link from 'next/link'
 
 // Function to get collections data (client-side)
@@ -119,9 +116,11 @@ export default function CollectionsPage() {
               >
                 <p
                   className={`
-                    ${category.isActive ? 'text-white' : 'text-gray-500'} 
+                    ${category.isActive ? 'text-white' : ''}
+                    ${!category.isActive ? 'text-gray-500' : ''}
                     hover:underline mr-4 inline-block break-words align-middle mb-2
                   `}
+                  style={{ color: category.isActive ? 'white' : '#6b7280' }}
                 >
                   {category.name}
                 </p>
@@ -148,13 +147,13 @@ export default function CollectionsPage() {
               >
                 <div className="flex flex-col my-4 min-w-full">
                   <div className="bg-white flex flex-col justify-start p-3">
-                    <h3 className="text-lg font-serif text-gray-400 font-normal mb-3">
+                    <h3 className="text-lg font-serif font-normal mb-3" style={{ color: '#9ca3af' }}>
                       {collection.category}
                     </h3>
                     <h2 className="text-3xl tracking-wider font-serif mb-2 font-bold">
                       {collection.name}
                     </h2>
-                    <p className="text-gray-400 mt-1 font-light max-w-md">
+                    <p className="mt-1 font-light max-w-md" style={{ color: '#9ca3af' }}>
                       {collection.short}
                     </p>
                   </div>

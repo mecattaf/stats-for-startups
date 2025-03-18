@@ -37,7 +37,14 @@ export default withNextra({
   // Image optimization settings (required for Cloudflare Pages)
   images: {
     domains: ['statsforstartups.com'],
-    unoptimized: true // Required for static exports on Cloudflare
+    unoptimized: true, // Required for static exports on Cloudflare
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'statsforstartups.com',
+        pathname: '/**',
+      },
+    ],
   },
   
   // Static export for Cloudflare Pages
@@ -51,6 +58,19 @@ export default withNextra({
   // Configure path aliases
   webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname);
+    
+    // Add polyfills for node modules
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+    };
+    
     return config;
+  },
+  
+  // Disable server-side features that don't work with static export
+  serverRuntimeConfig: {
+    disableFS: true
   }
 });

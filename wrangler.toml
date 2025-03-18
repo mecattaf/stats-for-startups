@@ -2,13 +2,10 @@ name = "stats-for-startups"
 compatibility_date = "2025-03-11"
 compatibility_flags = ["nodejs_compat"]
 
-# Explicitly set main to avoid the deprecated site.entry-point warning
-main = "workers-site/index.js"
-
 # Configure build settings
 [build]
 command = "npm run build"
 
 # Configure site settings
 [site]
-bucket = ".vercel/output/static"
+bucket = "out"

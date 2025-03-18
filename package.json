@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+    "build": "next build && npm run build:pagefind",
+    "build:pagefind": "pagefind --site out --output-path out/_pagefind",
     "start": "next start",
     "lint": "ESLINT_USE_FLAT_CONFIG=true eslint --cache --max-warnings 0 .",
     "deploy": "wrangler pages deploy out"
