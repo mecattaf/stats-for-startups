@@ -2,83 +2,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import CollectionCard from '@/app/_components/features/CollectionCard';
 import { getDictionary } from '@/lib/i18n/getDictionary';
-import { getPageData } from 'nextra/page-map';
+import { createContentLoader } from 'nextra/page-map';
+import { getKpiLists, getAlphabetMap } from '@/app/_lib/content-loader';
+
+// Create content loader for the MDX files
+const contentLoader = createContentLoader();
 
 // Generate static params for the language pages
 export function generateStaticParams() {
   return [{ lang: 'en' }];
 }
-
-// Sample collection data (instead of reading from files)
-const COLLECTIONS = [
-  {
-    name: "Popular KPIs",
-    slug: "popular-kpis",
-    category: "Popular",
-    short: "The most frequently used KPIs across all startups."
-  },
-  {
-    name: "Early Stage Metrics",
-    slug: "early-stage-metrics",
-    category: "Trends",
-    short: "Essential metrics for pre-seed and seed stage startups."
-  },
-  {
-    name: "SaaS Fundamentals",
-    slug: "saas-fundamentals",
-    category: "Industry",
-    short: "Core metrics for software-as-a-service businesses."
-  },
-  {
-    name: "Growth Indicators",
-    slug: "growth-indicators",
-    category: "Growth",
-    short: "Key metrics that signal healthy growth for startups."
-  },
-  {
-    name: "Investor Focus",
-    slug: "investor-focus",
-    category: "Charge",
-    short: "KPIs that investors prioritize during funding rounds."
-  }
-];
-
-// Alphabet map sample data (static data rather than from file system)
-const ALPHABET_MAP = {
-  'a': [
-    { abbreviation: 'ARR', slug: 'annual-recurring-revenue' },
-    { abbreviation: 'ACV', slug: 'annual-contract-value' },
-    { abbreviation: 'ARPU', slug: 'average-revenue-per-user' }
-  ],
-  'b': [
-    { abbreviation: 'Burn', slug: 'burn-rate' },
-    { abbreviation: 'BEP', slug: 'breakeven-point' }
-  ],
-  'c': [
-    { abbreviation: 'CAC', slug: 'customer-acquisition-cost' },
-    { abbreviation: 'CCR', slug: 'customer-churn-rate' },
-    { abbreviation: 'CTR', slug: 'click-through-rate' }
-  ],
-  'd': [
-    { abbreviation: 'DAU', slug: 'daily-active-users' }
-  ],
-  'l': [
-    { abbreviation: 'LTV', slug: 'customer-lifetime-value' },
-    { abbreviation: 'L/C', slug: 'ltv-cac-ratio' }
-  ],
-  'm': [
-    { abbreviation: 'MAU', slug: 'monthly-active-users' },
-    { abbreviation: 'MRR', slug: 'monthly-recurring-revenue' }
-  ],
-  'n': [
-    { abbreviation: 'NPS', slug: 'net-promoter-score' },
-    { abbreviation: 'NDR', slug: 'net-dollar-retention' }
-  ],
-  'r': [
-    { abbreviation: 'ROI', slug: 'return-on-investment' },
-    { abbreviation: 'Rttn', slug: 'retention-rate' }
-  ]
-};
 
 export async function generateMetadata({ params }) {
   const { lang } = params;
@@ -86,15 +19,15 @@ export async function generateMetadata({ params }) {
   
   // Try to get index page content from the content directory
   try {
-    const pageData = await getPageData({
+    const indexContent = await contentLoader.load({
       locale: lang,
-      mdxPath: []
+      path: []
     });
     
-    if (pageData && pageData.frontMatter && pageData.frontMatter.title) {
+    if (indexContent && indexContent.frontMatter && indexContent.frontMatter.title) {
       return {
-        title: pageData.frontMatter.title,
-        description: pageData.frontMatter.description || dictionary.siteDescription,
+        title: indexContent.frontMatter.title,
+        description: indexContent.frontMatter.description || dictionary.siteDescription,
       };
     }
   } catch (error) {
@@ -112,15 +45,33 @@ export default async function HomePage({ params }) {
   const { lang } = params;
   const dictionary = await getDictionary(lang);
   
-  // Get collections and alphabet map
-  const collections = COLLECTIONS;
-  const alphabetMap = ALPHABET_MAP;
+  // Get collections dynamically from content/lists
+  const collections = await getKpiLists(lang);
+  
+  // Get alphabet map dynamically from content/kpis
+  const alphabetMap = await getAlphabetMap(lang);
   
   // Get alphabet letters with counts
   const alphabetLetters = Object.keys(alphabetMap).sort().map(letter => ({
     letter: letter.toUpperCase(),
     count: alphabetMap[letter].length
   }));
+  
+  // Calculate total number of KPIs
+  const totalKpis = Object.values(alphabetMap).reduce((sum, letterKpis) => sum + letterKpis.length, 0);
+  
+  // Make sure we have at least 5 collections to display
+  const displayCollections = collections.length >= 5 
+    ? collections.slice(0, 5) 
+    : [
+        ...(collections || []),
+        ...Array(5 - (collections?.length || 0)).fill({
+          name: "Sample Collection",
+          slug: "#",
+          category: "Sample",
+          short: "This is a placeholder for a collection."
+        })
+      ];
   
   return (
     <div data-pagefind-body>
@@ -129,9 +80,9 @@ export default async function HomePage({ params }) {
         <div className="container mx-auto">
           <div className="container mx-auto flex flex-col gap-6 md:flex-row justify-center">
             {/* Display first 5 collections as feature cards */}
-            {collections.slice(0, 5).map((collection, index) => (
+            {displayCollections.slice(0, 5).map((collection, index) => (
               <div 
-                key={collection.slug} 
+                key={`${collection.slug}-${index}`} 
                 className="w-full md:w-1/5 justify-between min-w-min flex flex-col"
               >
                 {/* If it's the last card, show About link */}
@@ -158,7 +109,7 @@ export default async function HomePage({ params }) {
                       A-Z
                     </strong>
                     <br />
-                    {dictionary.alphabet?.all || "All"} {Object.values(alphabetMap).flat().length} {dictionary.common?.metrics || "metrics"}
+                    {dictionary.alphabet?.all || "All"} {totalKpis} {dictionary.common?.metrics || "metrics"}
                   </Link>
                 ) : null}
               </div>

@@ -18,7 +18,6 @@ const EXCLUDED_PATHS = /^(\/(_next|api|_pagefind)|\/favicon\.ico)/;
  * 1. Skips processing for static files, API routes, and internal Next.js files
  * 2. Redirects the root path (/) to the default language path (/en)
  * 3. Validates language codes in the URL and redirects invalid languages to the default
- * 4. Rewrites paths like /en/about to /en/content/about for MDX content
  * 
  * @param {NextRequest} req - The incoming request
  * @returns {NextResponse|undefined} - The response or undefined to continue
@@ -63,19 +62,6 @@ export async function middleware(req) {
     
     // Redirect to the language path
     return NextResponse.redirect(redirectUrl);
-  }
-  
-  // Handle rewrites for direct content paths
-  // Example: /en/about should be handled by /en/content/about
-  if (pathnameSegments.length > 2 && 
-      !['content', 'kpis', 'collections', 'tags', '_next', 'api', '_pagefind', 'img'].includes(pathnameSegments[2])) {
-    
-    // Create rewrite path
-    const contentPath = ['', pathnameSegments[1], 'content', ...pathnameSegments.slice(2)].join('/');
-    const rewriteUrl = new URL(contentPath, req.url);
-    
-    // Rewrite to the content path
-    return NextResponse.rewrite(rewriteUrl);
   }
   
   // If the language code is valid and no other conditions are met, continue with the request

@@ -7,7 +7,7 @@
     "build": "next build && npm run build:pagefind",
     "build:pagefind": "pagefind --site out --output-path out/_pagefind",
     "start": "next start",
-    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint --cache --max-warnings 0 .",
+    "lint": "next lint",
     "deploy": "wrangler pages deploy out"
   },
   "dependencies": {
@@ -16,9 +16,7 @@
     "gray-matter": "^4.0.3",
     "katex": "^0.16.11",
     "next": "^14.1.0",
-    "next-mdx-remote": "^4.4.1",
     "nextra": "^4.2.16",
-    "nextra-theme-docs": "^4.2.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rehype-katex": "^7.0.0",
@@ -33,7 +31,7 @@
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.0.0",
     "autoprefixer": "^10.4.17",
-    "eslint": "^9.21.0",
+    "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
     "next-sitemap": "^4.2.3",
     "pagefind": "^1.0.4",

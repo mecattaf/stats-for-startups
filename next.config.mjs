@@ -36,7 +36,6 @@ export default withNextra({
   
   // Image optimization settings (required for Cloudflare Pages)
   images: {
-    domains: ['statsforstartups.com'],
     unoptimized: true, // Required for static exports on Cloudflare
     remotePatterns: [
       {

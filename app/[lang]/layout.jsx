@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
       template: `%s | ${dictionary.siteTitle}`
     },
     description: dictionary.siteDescription,
-    keywords: dictionary.siteKeywords.split(',').map(keyword => keyword.trim()),
+    keywords: dictionary.siteKeywords?.split(',').map(keyword => keyword.trim()) || [],
     authors: [{ name: 'Charge Ventures' }],
     creator: 'Charge Ventures',
     openGraph: {
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }) {
 
 export default async function LocaleLayout({ children, params }) {
   const { lang } = params;
-  const pageMap = await getPageMap(lang);
+  const pageMap = await getPageMap();
   const direction = getDirection(lang);
   const dictionary = await getDictionary(lang);
   

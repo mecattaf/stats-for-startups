@@ -1,7 +1,10 @@
-import { getPageMap, getPageData } from 'nextra/page-map';
+import { getPageMap, createContentLoader } from 'nextra/page-map';
 import { MDXRemote } from 'nextra/mdx-remote';
 import { notFound } from 'next/navigation';
 import { getDictionary } from '@/lib/i18n/getDictionary';
+
+// Create content loader for the MDX files
+const contentLoader = createContentLoader();
 
 // Generate static params for all MDX pages
 export async function generateStaticParams() {
@@ -46,19 +49,19 @@ export async function generateMetadata({ params }) {
   const { lang, mdxPath = [] } = params;
   
   try {
-    // Get page data for metadata
-    const pageData = await getPageData({
+    // Load content for the given path
+    const mdxContent = await contentLoader.load({
       locale: lang,
-      mdxPath: mdxPath || [],
+      path: mdxPath || []
     });
     
-    if (!pageData) {
+    if (!mdxContent) {
       return {
         title: 'Page Not Found',
       };
     }
     
-    const { frontMatter, title } = pageData;
+    const { frontMatter, title } = mdxContent;
     const dictionary = await getDictionary(lang);
     
     return {
@@ -78,17 +81,17 @@ export default async function MDXPage({ params }) {
   const { lang, mdxPath = [] } = params;
   
   try {
-    // Get page data for rendering
-    const pageData = await getPageData({
+    // Load content for the given path
+    const mdxContent = await contentLoader.load({
       locale: lang,
-      mdxPath: mdxPath || [],
+      path: mdxPath || []
     });
     
-    if (!pageData) {
+    if (!mdxContent) {
       return notFound();
     }
     
-    const { content, frontMatter, title, structuredData } = pageData;
+    const { content, frontMatter, title } = mdxContent;
     
     return (
       <div className="container mx-auto px-4 py-8">
