@@ -3,7 +3,7 @@ import path from 'path'
 import { notFound } from 'next/navigation'
 import matter from 'gray-matter'
 import Link from 'next/link'
-import { MDXRemote } from 'next-mdx-remote/rsc'
+import { MDXRemote } from 'nextra/mdx-remote'
 import KpiListItem from '@/app/_components/kpi/KpiListItem'
 
 // Generate metadata for the page

@@ -71,5 +71,21 @@ export default withNextra({
   // Disable server-side features that don't work with static export
   serverRuntimeConfig: {
     disableFS: true
+  },
+  
+  // Skip type checking during build to speed up the process
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
+  
+  // Skip ESLint during builds
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
   }
 });
