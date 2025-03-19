@@ -1,23 +1,25 @@
-import fs from 'fs/promises'
-import path from 'path'
-import { notFound } from 'next/navigation'
-import matter from 'gray-matter'
-import Link from 'next/link'
-import { MDXRemote } from 'nextra/mdx-remote'
-import KpiListItem from '@/app/_components/kpi/KpiListItem'
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { MDXRemote } from 'nextra/mdx-remote';
+import KpiListItem from '@/app/_components/kpi/KpiListItem';
+import { getPageMap } from 'nextra/page-map';
+import fs from 'fs/promises';
+import path from 'path';
+import matter from 'gray-matter';
+import { getAllKpis } from '@/app/_lib/content-loader';
 
 // Generate metadata for the page
 export async function generateMetadata({ params }) {
-  const { category, slug } = params
+  const { category, slug } = params;
   
   try {
-    const tag = await getTagBySlug(category, slug)
+    const tag = await getTagBySlug(category, slug);
     
     // Format the category name for display (capitalize first letter of each word)
     const formattedCategory = category
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
+      .join(' ');
     
     return {
       title: `${tag.name} - ${formattedCategory} Tag`,
@@ -26,12 +28,12 @@ export async function generateMetadata({ params }) {
         title: `${tag.name} - ${formattedCategory} Tag`,
         description: tag.description || `KPIs tagged with ${tag.name}.`,
       }
-    }
+    };
   } catch (error) {
     return {
       title: 'Tag Not Found',
       description: 'The requested tag could not be found.'
-    }
+    };
   }
 }
 
@@ -39,77 +41,46 @@ export async function generateMetadata({ params }) {
 async function getTagBySlug(category, slug) {
   try {
     // Path to the tag MDX file
-    const filePath = path.join(process.cwd(), 'content', 'tags', category, `${slug}.mdx`)
+    const filePath = path.join(process.cwd(), 'content', 'en', 'tags', category, `${slug}.mdx`);
     
     // Read the file
-    const fileContent = await fs.readFile(filePath, 'utf8')
+    const fileContent = await fs.readFile(filePath, 'utf8');
     
     // Parse the frontmatter and content
-    const { data, content } = matter(fileContent)
+    const { data, content } = matter(fileContent);
     
     return {
       ...data,
       slug,
       category,
       content
-    }
+    };
   } catch (error) {
-    throw new Error(`Failed to get tag: ${error.message}`)
-  }
-}
-
-// Get all KPIs
-async function getAllKpis() {
-  try {
-    const kpisDir = path.join(process.cwd(), 'content', 'kpis')
-    const files = await fs.readdir(kpisDir)
-    
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'))
-    
-    const kpis = await Promise.all(
-      mdxFiles.map(async (file) => {
-        const filePath = path.join(kpisDir, file)
-        const content = await fs.readFile(filePath, 'utf8')
-        const { data } = matter(content)
-        
-        // Get slug from filename
-        const slug = file.replace(/\.mdx$/, '')
-        
-        return {
-          ...data,
-          slug
-        }
-      })
-    )
-    
-    return kpis
-  } catch (error) {
-    console.error('Error getting KPIs:', error)
-    return []
+    throw new Error(`Failed to get tag: ${error.message}`);
   }
 }
 
 export default async function TagDetailPage({ params }) {
-  const { category, slug } = params
+  const { category, slug } = params;
   
   try {
     // Get the tag details
-    const tag = await getTagBySlug(category, slug)
+    const tag = await getTagBySlug(category, slug);
     
     // Get all KPIs to filter for this tag
-    const allKpis = await getAllKpis()
+    const allKpis = await getAllKpis();
     
     // Filter KPIs that have this tag
     const taggedKpis = allKpis.filter(kpi => {
       if (!kpi.tags || !Array.isArray(kpi.tags)) {
-        return false
+        return false;
       }
       
       // Check if any of the KPI's tags match this tag
       return kpi.tags.some(kpiTag => {
         // If tag is a string, compare it directly
         if (typeof kpiTag === 'string') {
-          return kpiTag.toLowerCase() === tag.name.toLowerCase()
+          return kpiTag.toLowerCase() === tag.name.toLowerCase();
         }
         
         // If tag is an object, check if it matches by slug, name, or other properties
@@ -118,18 +89,18 @@ export default async function TagDetailPage({ params }) {
             (kpiTag.slug && kpiTag.slug === slug) ||
             (kpiTag.name && kpiTag.name.toLowerCase() === tag.name.toLowerCase()) ||
             (kpiTag.category && kpiTag.category.toLowerCase() === category.replace(/-/g, ' ').toLowerCase())
-          )
+          );
         }
         
-        return false
-      })
-    })
+        return false;
+      });
+    });
     
     // Format the category name for display (capitalize first letter of each word)
     const formattedCategory = category
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
+      .join(' ');
     
     return (
       <div>
@@ -175,9 +146,10 @@ export default async function TagDetailPage({ params }) {
           </div>
         </div>
       </div>
-    )
+    );
   } catch (error) {
+    console.error('Error rendering tag page:', error);
     // If tag not found, return 404
-    return notFound()
+    return notFound();
   }
 }

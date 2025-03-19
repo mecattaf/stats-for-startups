@@ -1,8 +1,12 @@
-// mdx-components.jsx - root level
 import Link from 'next/link'
 import Image from 'next/image'
 import { BlockMath, InlineMath } from './components/Math'
+import { Pre, withIcons } from 'nextra/components'
 
+/**
+ * This file defines how MDX components are rendered in Nextra v4
+ * Following the conventions described in the Nextra v4 blog post
+ */
 export function useMDXComponents(components) {
   return {
     // Handle links (internal vs external)
@@ -48,6 +52,38 @@ export function useMDXComponents(components) {
     // Math components
     BlockMath,
     InlineMath,
+    
+    // Pre component with custom code highlighting
+    pre: withIcons(Pre, {
+      js: (props) => (
+        <svg 
+          {...props} 
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 4L4 20" />
+          <path d="M4 4L20 20" />
+        </svg>
+      ),
+      jsx: (props) => (
+        <svg 
+          {...props} 
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M16 8L8 16" />
+          <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      )
+    }),
     
     // For inline math, we'll use a special syntax: $...$
     // This requires special handling in the mdx processor

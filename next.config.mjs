@@ -13,7 +13,7 @@ const withNextra = nextra({
   // MDX options for rendering math equations
   mdxOptions: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex]
+    rehypePlugins: [rehypeKatex],
   },
   
   // Set content directory base path to '/content'
@@ -25,8 +25,14 @@ const withNextra = nextra({
   // Default code block configurations
   defaultShowCopyCode: true,
   
-  // Optional: Configure custom tag styling
-  whiteListTagsStyling: ['h1', 'h2', 'h3']
+  // Configure custom tag styling for HTML elements in MDX
+  whiteListTagsStyling: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'code'],
+  
+  // Transform frontmatter data (if needed)
+  frontmatterTransform: (frontMatter) => {
+    // Perform any transformations on frontmatter if needed
+    return frontMatter;
+  }
 });
 
 // Export the combined Next.js config
@@ -46,19 +52,23 @@ export default withNextra({
     ],
   },
   
-  // Static export for Cloudflare Pages
+  // Static export for Cloudflare Pages - this is required for Cloudflare Pages
   output: 'export',
   
   // Cloudflare Pages specific optimizations
   experimental: {
-    optimizePackageImports: ['nextra', 'nextra/components']
+    optimizePackageImports: [
+      'nextra', 
+      'nextra/components',
+      'nextra/mdx-remote'
+    ]
   },
   
   // Configure path aliases
   webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname);
     
-    // Add polyfills for node modules
+    // Add polyfills for node modules 
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,

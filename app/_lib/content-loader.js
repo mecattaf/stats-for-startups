@@ -1,49 +1,103 @@
 import { getPageMap } from 'nextra/page-map';
+import fs from 'fs/promises';
 import path from 'path';
+import matter from 'gray-matter';
 
-// Create a simple content loader function to mimic Nextra's createContentLoader
-// Since it's not directly exported, we'll implement our own simplified version
-function createContentLoader() {
+/**
+ * Helper function to create a content loader that loads and processes MDX files
+ * - This is similar to Nextra's internal createContentLoader but implemented based on public APIs
+ */
+export function createContentLoader() {
   return {
+    /**
+     * Load content for a given path and locale
+     * 
+     * @param {Object} options - Options object
+     * @param {string} options.locale - The locale to use (e.g., 'en')
+     * @param {string|Array} options.path - The path to the content as a string or array of segments
+     * @returns {Promise<Object|null>} - The processed content or null if not found
+     */
     async load({ locale, path: contentPath }) {
       try {
-        // TODO: Implement the actual content loading logic
-        // For now, we'll rely on stub implementation that works with our data directory
+        // Convert path array to string path if needed
+        const pathString = Array.isArray(contentPath) 
+          ? contentPath.join('/') 
+          : contentPath;
         
-        // This is just a placeholder that will be replaced with actual implementation
-        const pageMap = await getPageMap();
+        // Construct the full path to the MDX file in the content directory
+        const filePath = path.join(
+          process.cwd(), 
+          'content', 
+          locale, 
+          pathString,
+          // If the path doesn't end with .mdx, assume it's a directory and add index.mdx
+          pathString.endsWith('.mdx') ? '' : 'index.mdx'
+        );
         
-        // Find the content in the page map
-        // In a real implementation, you would use the content directory API
-        return {
-          content: "Content placeholder",
-          frontMatter: {},
-          title: "Title placeholder"
-        };
+        // Check if the file exists
+        try {
+          await fs.access(filePath);
+        } catch (error) {
+          // Try with .mdx extension if not found
+          if (!pathString.endsWith('.mdx')) {
+            const mdxFilePath = `${filePath.slice(0, -8)}.mdx`;
+            try {
+              await fs.access(mdxFilePath);
+              // If we reach here, the .mdx file exists
+              return this.processMdxFile(mdxFilePath);
+            } catch {
+              // File not found even with .mdx extension
+              return null;
+            }
+          }
+          // File not found
+          return null;
+        }
+        
+        // Process the MDX file
+        return this.processMdxFile(filePath);
       } catch (error) {
         console.error(`Error loading content: ${error.message}`);
         return null;
       }
+    },
+    
+    /**
+     * Process an MDX file by reading it and parsing frontmatter
+     * 
+     * @param {string} filePath - The path to the MDX file
+     * @returns {Promise<Object>} - The processed content
+     */
+    async processMdxFile(filePath) {
+      // Read the file content
+      const source = await fs.readFile(filePath, 'utf8');
+      
+      // Parse frontmatter and content
+      const { data: frontMatter, content } = matter(source);
+      
+      // Extract title from frontmatter or first heading
+      const title = frontMatter.title || this.extractTitleFromContent(content);
+      
+      return {
+        content,
+        frontMatter,
+        title
+      };
+    },
+    
+    /**
+     * Extract title from the first heading in the content
+     * 
+     * @param {string} content - The MDX content
+     * @returns {string|null} - The extracted title or null if not found
+     */
+    extractTitleFromContent(content) {
+      // Look for the first heading (# Title)
+      const titleMatch = content.match(/^#\s+(.+)$/m);
+      return titleMatch ? titleMatch[1] : null;
     }
   };
 }
-
-// Create the content loader
-const contentLoader = {
-  async load({ locale, path: contentPath }) {
-    try {
-      // In a production implementation, this would use Nextra's content loading APIs
-      // For now, we'll implement a simplified version that works with our data
-      
-      // This will be replaced with the actual implementation
-      // once we figure out the correct API
-      return null;
-    } catch (error) {
-      console.error(`Error loading content: ${error.message}`);
-      return null;
-    }
-  }
-};
 
 /**
  * Get KPI lists from content directory
@@ -53,44 +107,48 @@ const contentLoader = {
  */
 export async function getKpiLists(locale = 'en') {
   try {
-    // Get the page map for the locale
-    const pageMap = await getPageMap();
+    // Try to read the lists directory
+    const listsDir = path.join(process.cwd(), 'content', locale, 'lists');
     
-    // Filter the page map to get the lists content
-    const listsEntries = findEntriesInPageMap(pageMap, 'lists', locale);
+    // Get all files in the directory
+    let files;
+    try {
+      files = await fs.readdir(listsDir);
+    } catch (error) {
+      console.error(`Lists directory not found: ${error.message}`);
+      return [];
+    }
     
-    // Load the content for each list
+    // Filter MDX files
+    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
+    
+    // Process each list file
     const lists = await Promise.all(
-      listsEntries.map(async (entry) => {
-        const pathParts = entry.path.split('/').filter(Boolean);
-        const slug = pathParts[pathParts.length - 1];
+      mdxFiles.map(async (file) => {
+        const filePath = path.join(listsDir, file);
+        const source = await fs.readFile(filePath, 'utf8');
+        const { data } = matter(source);
         
-        try {
-          // Load the MDX content - this would use Nextra's content loader in production
-          // For now, we'll return some stub data based on our understanding of the site
-          return {
-            slug,
-            title: `Collection ${slug}`,
-            category: 'General',
-            short: `A collection of KPIs related to ${slug}`
-          };
-        } catch (error) {
-          console.error(`Error loading KPI list: ${slug}`, error);
-          return null;
-        }
+        // Get slug from filename
+        const slug = file.replace(/\.mdx$/, '');
+        
+        return {
+          ...data,
+          slug
+        };
       })
     );
     
-    // Filter out nulls and sort by category/name
+    // Filter out any null items and sort by category and name
     return lists
       .filter(Boolean)
       .sort((a, b) => {
         // First sort by category
         if (a.category !== b.category) {
-          return a.category?.localeCompare(b.category) || 0;
+          return (a.category || '').localeCompare(b.category || '');
         }
-        // Then sort by name
-        return a.name?.localeCompare(b.name) || 0;
+        // Then sort by name or title
+        return (a.name || a.title || '').localeCompare(b.name || b.title || '');
       });
   } catch (error) {
     console.error('Error getting KPI lists:', error);
@@ -106,46 +164,39 @@ export async function getKpiLists(locale = 'en') {
  */
 export async function getAlphabetMap(locale = 'en') {
   try {
-    // Get the page map for the locale
-    const pageMap = await getPageMap();
+    // Get all KPIs
+    const kpis = await getAllKpis(locale);
     
-    // Filter the page map to get the KPI content
-    const kpiEntries = findEntriesInPageMap(pageMap, 'kpis', locale);
-    
-    // Create a map to hold KPIs by first letter
+    // Group KPIs by first letter
     const alphabetMap = {};
     
-    // Load each KPI and organize by first letter
-    for (const entry of kpiEntries) {
-      const pathParts = entry.path.split('/').filter(Boolean);
-      const slug = pathParts[pathParts.length - 1];
+    for (const kpi of kpis) {
+      // Determine display name (abbreviation or title)
+      const displayName = kpi.abbreviation || kpi.title;
       
-      try {
-        // In a production implementation, this would load the actual content
-        // For now, we'll create some sample data
-        const displayName = slug.replace(/-/g, ' ');
-        
-        // Get the first letter (lowercase)
-        const firstLetter = displayName.charAt(0).toLowerCase();
-        
-        // Initialize the array for this letter if it doesn't exist
-        if (!alphabetMap[firstLetter]) {
-          alphabetMap[firstLetter] = [];
-        }
-        
-        // Add the KPI data to the alphabet map
-        alphabetMap[firstLetter].push({
-          abbreviation: displayName,
-          slug
-        });
-      } catch (error) {
-        console.error(`Error loading KPI: ${slug}`, error);
+      if (!displayName) continue;
+      
+      // Get the first letter (lowercase)
+      const firstLetter = displayName.charAt(0).toLowerCase();
+      
+      // Initialize the array for this letter if it doesn't exist
+      if (!alphabetMap[firstLetter]) {
+        alphabetMap[firstLetter] = [];
       }
+      
+      // Add the KPI data to the alphabet map
+      alphabetMap[firstLetter].push({
+        abbreviation: displayName,
+        title: kpi.title,
+        slug: kpi.slug
+      });
     }
     
     // Sort the entries in each letter
     Object.keys(alphabetMap).forEach(letter => {
-      alphabetMap[letter].sort((a, b) => a.abbreviation.localeCompare(b.abbreviation));
+      alphabetMap[letter].sort((a, b) => 
+        (a.abbreviation || '').localeCompare(b.abbreviation || '')
+      );
     });
     
     return alphabetMap;
@@ -153,64 +204,6 @@ export async function getAlphabetMap(locale = 'en') {
     console.error('Error creating alphabet map:', error);
     return {};
   }
-}
-
-/**
- * Find entries in the page map based on a given path and locale
- * 
- * @param {Array} pageMap - The Nextra page map
- * @param {string} pathPart - The path part to search for (e.g., 'kpis', 'lists')
- * @param {string} locale - The locale code (e.g., 'en')
- * @returns {Array} - Array of matching entries
- */
-function findEntriesInPageMap(pageMap, pathPart, locale) {
-  const results = [];
-  
-  // Helper function to recursively find entries
-  const findRecursive = (items, currentPath = '') => {
-    for (const item of items || []) {
-      // Skip items with undefinite locale
-      if (item.locale && item.locale !== locale) continue;
-      
-      const itemPath = currentPath ? `${currentPath}/${item.name}` : item.name;
-      
-      // If this is a folder/directory
-      if (item.kind === 'Folder' && item.children) {
-        // If this is the folder we're looking for
-        if (item.name === pathPart) {
-          // Process all children
-          findChildren(item.children, itemPath);
-        } else {
-          // Continue searching in children
-          findRecursive(item.children, itemPath);
-        }
-      }
-    }
-  };
-  
-  // Helper function to find all MDX pages within a folder
-  const findChildren = (items, currentPath = '') => {
-    for (const item of items || []) {
-      const itemPath = `${currentPath}/${item.name}`;
-      
-      // If this is an MDX page
-      if (item.kind === 'MdxPage') {
-        results.push({
-          name: item.name,
-          path: itemPath
-        });
-      } 
-      // If this is a subfolder
-      else if (item.kind === 'Folder' && item.children) {
-        findChildren(item.children, itemPath);
-      }
-    }
-  };
-  
-  // Start the recursive search
-  findRecursive(pageMap);
-  
-  return results;
 }
 
 /**
@@ -222,19 +215,26 @@ function findEntriesInPageMap(pageMap, pathPart, locale) {
  */
 export async function getKpiBySlug(slug, locale = 'en') {
   try {
-    // In a production implementation, this would fetch the KPI from the content directory
-    // For now, we'll return some sample data to unblock the build
+    // Path to the KPI MDX file
+    const filePath = path.join(process.cwd(), 'content', locale, 'kpis', `${slug}.mdx`);
+    
+    // Check if the file exists
+    try {
+      await fs.access(filePath);
+    } catch (error) {
+      console.error(`KPI file not found: ${filePath}`);
+      return null;
+    }
+    
+    // Read the file content
+    const source = await fs.readFile(filePath, 'utf8');
+    
+    // Parse frontmatter and content
+    const { data: frontMatter, content } = matter(source);
+    
     return {
-      content: `# ${slug}\n\nContent for ${slug}`,
-      frontMatter: {
-        title: slug.replace(/-/g, ' '),
-        abbreviation: slug.substring(0, 3).toUpperCase(),
-        updatedAt: new Date().toISOString(),
-        tags: [
-          { name: 'Sample', category: 'Function', slug: 'sample' }
-        ],
-        relatedKpis: []
-      }
+      content,
+      frontMatter
     };
   } catch (error) {
     console.error(`Error getting KPI by slug: ${slug}`, error);
@@ -251,15 +251,26 @@ export async function getKpiBySlug(slug, locale = 'en') {
  */
 export async function getKpiListBySlug(slug, locale = 'en') {
   try {
-    // In a production implementation, this would load the actual content
-    // For now, we'll return some sample data
+    // Path to the KPI list MDX file
+    const filePath = path.join(process.cwd(), 'content', locale, 'lists', `${slug}.mdx`);
+    
+    // Check if the file exists
+    try {
+      await fs.access(filePath);
+    } catch (error) {
+      console.error(`KPI list file not found: ${filePath}`);
+      return null;
+    }
+    
+    // Read the file content
+    const source = await fs.readFile(filePath, 'utf8');
+    
+    // Parse frontmatter and content
+    const { data: frontMatter, content } = matter(source);
+    
     return {
-      content: `# ${slug}\n\nContent for ${slug}`,
-      frontMatter: {
-        title: slug.replace(/-/g, ' '),
-        category: 'General',
-        kpis: []
-      }
+      content,
+      frontMatter
     };
   } catch (error) {
     console.error(`Error getting KPI list by slug: ${slug}`, error);
@@ -275,40 +286,42 @@ export async function getKpiListBySlug(slug, locale = 'en') {
  */
 export async function getAllKpis(locale = 'en') {
   try {
-    // Get the page map for the locale
-    const pageMap = await getPageMap();
+    // Path to the KPIs directory
+    const kpisDir = path.join(process.cwd(), 'content', locale, 'kpis');
     
-    // Filter the page map to get the KPI content
-    const kpiEntries = findEntriesInPageMap(pageMap, 'kpis', locale);
+    // Get all files in the directory
+    let files;
+    try {
+      files = await fs.readdir(kpisDir);
+    } catch (error) {
+      console.error(`KPIs directory not found: ${error.message}`);
+      return [];
+    }
     
-    // Load the content for each KPI
+    // Filter MDX files
+    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
+    
+    // Process each KPI file
     const kpis = await Promise.all(
-      kpiEntries.map(async (entry) => {
-        const pathParts = entry.path.split('/').filter(Boolean);
-        const slug = pathParts[pathParts.length - 1];
+      mdxFiles.map(async (file) => {
+        const filePath = path.join(kpisDir, file);
+        const source = await fs.readFile(filePath, 'utf8');
+        const { data } = matter(source);
         
-        try {
-          // In a production implementation, this would load the actual content
-          // For now, we'll create some sample data
-          return {
-            slug,
-            title: slug.replace(/-/g, ' '),
-            abbreviation: slug.substring(0, 3).toUpperCase()
-          };
-        } catch (error) {
-          console.error(`Error loading KPI: ${slug}`, error);
-          return null;
-        }
+        // Get slug from filename
+        const slug = file.replace(/\.mdx$/, '');
+        
+        return {
+          ...data,
+          slug
+        };
       })
     );
     
-    // Filter out nulls
+    // Filter out any null items
     return kpis.filter(Boolean);
   } catch (error) {
     console.error('Error getting all KPIs:', error);
     return [];
   }
 }
-
-// Export the createContentLoader function for compatibility with existing code
-export { createContentLoader };
