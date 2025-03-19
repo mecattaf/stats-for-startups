@@ -37,12 +37,12 @@ export default function CollectionCard({ info, index }) {
   const renderCard = () => {
     if (index === 0) {
       return (
-        <div className="glass flex text-white flex-col h-52 border-gray-800 border-2 hover:border-white min-w-full">
+        <div className="glass flex text-white flex-col h-52 border-2 hover:border-white min-w-full" style={{ borderColor: 'var(--color-gray-800)' }}>
           <div className="relative min-h-full flex flex-col p-6">
-            <p className="text-gray-500 font-mono mb-2 lowercase">
+            <p className="mb-2 lowercase" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gray-500)' }}>
               {info.category}
             </p>
-            <p className="py-2 text-2xl font-normal mb-auto font-serif">
+            <p className="py-2 text-2xl mb-auto font-normal" style={{ fontFamily: 'var(--font-serif)' }}>
               {info.name}
             </p>
             <Image
@@ -59,9 +59,9 @@ export default function CollectionCard({ info, index }) {
     
     if (index === 1) {
       return (
-        <div className="glass flex text-white flex-col h-60 md:h-80 border-gray-800 border-2 hover:border-white min-w-full">
+        <div className="glass flex text-white flex-col h-60 md:h-80 border-2 hover:border-white min-w-full" style={{ borderColor: 'var(--color-gray-800)' }}>
           <div className="relative min-h-full flex flex-col p-6">
-            <p className="text-2xl font-normal mb-auto font-serif">
+            <p className="text-2xl mb-auto font-normal" style={{ fontFamily: 'var(--font-serif)' }}>
               {info.name}
             </p>
             <Image
@@ -71,7 +71,7 @@ export default function CollectionCard({ info, index }) {
               height={16}
               alt=""
             />
-            <p className="text-gray-500 font-mono lowercase">
+            <p className="lowercase" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gray-500)' }}>
               {info.category}
             </p>
           </div>
@@ -81,7 +81,7 @@ export default function CollectionCard({ info, index }) {
     
     if (index === 2) {
       return (
-        <div className="glass flex text-white flex-col h-60 md:h-80 border-gray-800 border-2 hover:border-white min-w-full">
+        <div className="glass flex text-white flex-col h-60 md:h-80 border-2 hover:border-white min-w-full" style={{ borderColor: 'var(--color-gray-800)' }}>
           <div className="min-h-full relative flex flex-col p-6">
             <Image
               src={getCategoryIcon(info.category)}
@@ -90,10 +90,10 @@ export default function CollectionCard({ info, index }) {
               height={16}
               alt=""
             />
-            <p className="mt-auto mb-4 text-gray-500 font-mono lowercase">
+            <p className="mt-auto mb-4 lowercase" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gray-500)' }}>
               {info.category}
             </p>
-            <p className="text-2xl font-normal font-serif">
+            <p className="text-2xl font-normal" style={{ fontFamily: 'var(--font-serif)' }}>
               {info.name}
             </p>
           </div>
@@ -103,12 +103,12 @@ export default function CollectionCard({ info, index }) {
     
     if (index === 3) {
       return (
-        <div className="glass flex text-white flex-col h-60 border-gray-800 border-2 hover:border-white min-w-full">
+        <div className="glass flex text-white flex-col h-60 border-2 hover:border-white min-w-full" style={{ borderColor: 'var(--color-gray-800)' }}>
           <div className="relative min-h-full flex flex-col p-6">
-            <p className="text-gray-500 font-mono lowercase">
+            <p className="lowercase" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gray-500)' }}>
               {info.category}
             </p>
-            <p className="mt-4 text-2xl font-normal mb-auto font-serif">
+            <p className="mt-4 text-2xl font-normal mb-auto" style={{ fontFamily: 'var(--font-serif)' }}>
               {info.name}
             </p>
             <Image
@@ -125,12 +125,12 @@ export default function CollectionCard({ info, index }) {
     
     if (index === 4) {
       return (
-        <div className="glass flex text-white flex-col h-60 border-gray-800 border-2 hover:border-white min-w-full">
+        <div className="glass flex text-white flex-col h-60 border-2 hover:border-white min-w-full" style={{ borderColor: 'var(--color-gray-800)' }}>
           <div className="min-h-full relative flex flex-col p-6">
-            <p className="py-2 text-2xl font-normal mb-auto font-serif">
+            <p className="py-2 text-2xl font-normal mb-auto" style={{ fontFamily: 'var(--font-serif)' }}>
               {info.name}
             </p>
-            <p className="text-gray-500 font-mono lowercase">
+            <p className="lowercase" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gray-500)' }}>
               {info.category}
             </p>
             <Image
@@ -147,12 +147,12 @@ export default function CollectionCard({ info, index }) {
     
     // Default card style
     return (
-      <div className="glass flex text-white flex-col h-52 border-gray-800 border-2 hover:border-white min-w-full">
+      <div className="glass flex text-white flex-col h-52 border-2 hover:border-white min-w-full" style={{ borderColor: 'var(--color-gray-800)' }}>
         <div className="relative min-h-full flex flex-col p-6">
-          <p className="text-gray-500 font-mono mb-2 lowercase">
+          <p className="mb-2 lowercase" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gray-500)' }}>
             {info.category}
           </p>
-          <p className="py-2 text-2xl font-normal mb-auto font-serif">
+          <p className="py-2 text-2xl font-normal mb-auto" style={{ fontFamily: 'var(--font-serif)' }}>
             {info.name}
           </p>
           <Image
@@ -175,10 +175,3 @@ export default function CollectionCard({ info, index }) {
     </div>
   )
 }
-
-// CSS for glass effect
-export const style = `
-.glass {
-  background-color: rgba(255, 255, 255, 0.01);
-}
-`
